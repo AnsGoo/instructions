@@ -1,0 +1,87 @@
+# 虚拟环境
+venv/
+.env/
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Python 编译文件
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 数据库文件
+*.sqlite3
+*.db
+
+# 日志文件
+*.log
+logs/
+
+# 静态文件（如果是由 Django 自动生成的）
+staticfiles/
+
+# 媒体文件
+media/
+
+# IDE 和编辑器配置文件
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# 操作系统文件
+.DS_Store
+Thumbs.db
+
+# 构建文件
+build/
+dist/
+*.egg-info/
+
+# 测试覆盖率
+.coverage
+coverage.xml
+htmlcov/
+
+# 其他临时文件
+*.tmp
+*.temp
+.cache/
+
+# 环境变量文件
+.env*
+
+# 虚拟环境相关
+*.pth
+*.egg
+*.manifest
+
+# 其他忽略项
+*.pid
+*.seed
+*.pid.lock
+
+# 不要忽略源代码和配置文件
+!.gitignore
+!.gitkeep
+!*.py
+!*.html
+!*.css
+!*.js
+!*.md
+!*.txt
+!*.json
+!*.xml
+!*.yaml
+!*.yml
+!requirements*.txt
+!setup.py
+
+bin/**
+lib/**
