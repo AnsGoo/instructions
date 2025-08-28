@@ -1,29 +1,8 @@
 from django.db import models
+from django.utils import timezone
 
-# Create your models here.
-class BaseModel(models.Model):
-    class Meta:
-        abstract = True
-        db_table = 'base_model'
-        ordering = ['id']
-        verbose_name = '基础模型'
-        verbose_name_plural = '基础模型'
-    id = models.AutoField(primary_key=True, verbose_name='ID')
-    create_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
-    update_time = models.DateTimeField(auto_now=True, verbose_name='更新时间')
-    is_delete = models.BooleanField(default=False, verbose_name='是否删除')
-    create_user = models.ForeignKey('user.User', on_delete=models.SET_NULL, null=True, blank=True, verbose_name='创建用户')
-    update_user = models.ForeignKey('user.User', on_delete=models.SET_NULL, null=True, blank=True, verbose_name='更新用户')
-    delete_at = models.DateTimeField(null=True, blank=True, verbose_name='删除时间')
+class BaseManger(models.Manager):
 
-    def delete(self, using=None, keep_parents=False):
-        self.is_deleted = True
-        self.deleted_at = timezone.now()
-        self.save()
-    
-    def hard_delete(self, using=None, keep_parents=False):
-        super().delete(using=using, keep_parents=keep_parents)
-    
     def get_queryset(self):
         # 重写基础查询集
         return super().get_queryset().filter(is_deleted=False)
@@ -66,6 +45,29 @@ class BaseModel(models.Model):
 
     def distinct(self, *args, **kwargs):
         return super().distinct(*args, **kwargs).filter(is_deleted=False)
+
+# Create your models here.
+class BaseModel(models.Model):
+    class Meta:
+        abstract = True
+        ordering = ['id']
+        verbose_name = '基础模型'
+        verbose_name_plural = '基础模型'
+    id = models.AutoField(primary_key=True, verbose_name='ID')
+    create_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
+    update_time = models.DateTimeField(auto_now=True, verbose_name='更新时间')
+    is_delete = models.BooleanField(default=False, verbose_name='是否删除')
+    create_user = models.ForeignKey('user.User', on_delete=models.SET_NULL, null=True, blank=True, verbose_name='创建用户')
+    update_user = models.ForeignKey('user.User', on_delete=models.SET_NULL, null=True, blank=True, verbose_name='更新用户')
+    delete_at = models.DateTimeField(null=True, blank=True, verbose_name='删除时间')
+
+    objects = BaseManger()
+
+    def delete(self, using=None, keep_parents=False):
+        self.is_deleted = True
+        self.deleted_at = timezone.now()
+        self.save()
+
         
     def __str__(self):
         return str(self.id)
@@ -104,17 +106,16 @@ class MetadataModel(BaseModel):
     attr30 = models.CharField(max_length=255, verbose_name='属性30', null=True, blank=True)
 
     class Meta:
-        db_table = 'metadata_model'
+        abstract = True
         verbose_name = '元数据模型'
         verbose_name_plural = '元数据模型'
 
 
-class EntityDefine(BaseModel):
+class AttrDefine(BaseModel):
     class Meta:
-        db_table = 'entity_define'
-        verbose_name = '实体定义'
-        verbose_name_plural = '实体定义'
-    entity_type = models.CharField(max_length=255, verbose_name='实体类型')
-    entity_name = models.CharField(max_length=255, verbose_name='实体名称')
-    entity_description = models.TextField(verbose_name='实体描述', null=True, blank=True)
-    entity_fields = models.JSONField(verbose_name='实体字段', null=True, blank=True)
+        db_table = 'attr_define'
+        verbose_name = '属性定义'
+        verbose_name_plural = '属性定义'
+    attr_type = models.CharField(max_length=255, verbose_name='属性类型')
+    attr_name = models.CharField(max_length=255, verbose_name='属性名称')
+    attr_description = models.TextField(verbose_name='实体描述', null=True, blank=True)

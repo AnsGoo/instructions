@@ -10,17 +10,24 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
+
+# 加载环境变量
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# 加载.env文件中的环境变量
+load_dotenv(os.path.join(BASE_DIR, '.env'))
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-=)^j(#-b(%=we3a)45attw92utna^u)k%+dfg(999)fo2t-nfw'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -75,11 +82,11 @@ WSGI_APPLICATION = 'instructions.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'instructions',  # 数据库名称
-        'USER': 'instructions',      # PostgreSQL 用户名
-        'PASSWORD': 'hXZJEpycbwtb2r4F',  # PostgreSQL 密码
-        'HOST': '192.168.124.18',     # 数据库主机
-        'PORT': '15432',          # PostgreSQL 默认端口
+        'NAME': os.environ.get('DB_NAME'),  # 数据库名称
+        'USER': os.environ.get('DB_USER'),      # PostgreSQL 用户名
+        'PASSWORD': os.environ.get('DB_PASSWORD'),  # PostgreSQL 密码
+        'HOST': os.environ.get('DB_HOST'),     # 数据库主机
+        'PORT': os.environ.get('DB_PORT'),          # PostgreSQL 端口
     }
 }
 
