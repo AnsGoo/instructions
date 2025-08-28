@@ -21,45 +21,52 @@ class BaseModel(models.Model):
         self.deleted_at = timezone.now()
         self.save()
     
-    def restore(self):
-        """恢复已删除的对象"""
-        self.is_deleted = False
-        self.deleted_at = None
-        self.save()
-    
     def hard_delete(self, using=None, keep_parents=False):
         super().delete(using=using, keep_parents=keep_parents)
     
     def get_queryset(self):
         # 重写基础查询集
         return super().get_queryset().filter(is_deleted=False)
+
     def all(self):
         return super().get_queryset()
    
     def filter(self, *args, **kwargs):
         return super().filter(*args, **kwargs).filter(is_deleted=False)
+
     def exclude(self, *args, **kwargs):
         return super().exclude(*args, **kwargs).filter(is_deleted=False)
+
     def get(self, *args, **kwargs):
         return super().get(*args, **kwargs).filter(is_deleted=False)
+
     def first(self):
         return super().first().filter(is_deleted=False)
+
     def last(self):
         return super().last().filter(is_deleted=False)
+
     def count(self):
         return super().count().filter(is_deleted=False)
+
     def exists(self):
         return super().exists().filter(is_deleted=False)    
+
     def values(self, *args, **kwargs):
         return super().values(*args, **kwargs).filter(is_deleted=False)
+
     def values_list(self, *args, **kwargs):
         return super().values_list(*args, **kwargs).filter(is_deleted=False)
+
     def annotate(self, *args, **kwargs):
         return super().annotate(*args, **kwargs).filter(is_deleted=False)
+
     def order_by(self, *args, **kwargs):
         return super().order_by(*args, **kwargs).filter(is_deleted=False)
+
     def distinct(self, *args, **kwargs):
         return super().distinct(*args, **kwargs).filter(is_deleted=False)
+        
     def __str__(self):
         return str(self.id)
 
@@ -111,4 +118,3 @@ class EntityDefine(BaseModel):
     entity_name = models.CharField(max_length=255, verbose_name='实体名称')
     entity_description = models.TextField(verbose_name='实体描述', null=True, blank=True)
     entity_fields = models.JSONField(verbose_name='实体字段', null=True, blank=True)
-    entity_type = models.CharField(max_length=255, verbose_name='实体类型')
