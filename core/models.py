@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.contrib.contenttypes.models import ContentType
 
 class BaseManger(models.Manager):
 
@@ -83,27 +84,27 @@ class MetadataModel(BaseModel):
     attr7 = models.CharField(max_length=255, verbose_name='属性7', null=True, blank=True)
     attr8 = models.CharField(max_length=255, verbose_name='属性8', null=True, blank=True)
     attr9 = models.CharField(max_length=255, verbose_name='属性9', null=True, blank=True)
-    attr10 = models.CharField(max_length=255, verbose_name='属性10', null=True, blank=True)     
-    attr11 = models.CharField(max_length=255, verbose_name='属性11', null=True, blank=True)
-    attr12 = models.CharField(max_length=255, verbose_name='属性12', null=True, blank=True)
-    attr13 = models.CharField(max_length=255, verbose_name='属性13', null=True, blank=True)
-    attr14 = models.CharField(max_length=255, verbose_name='属性14', null=True, blank=True)
-    attr15 = models.CharField(max_length=255, verbose_name='属性15', null=True, blank=True)
-    attr16 = models.CharField(max_length=255, verbose_name='属性16', null=True, blank=True)
-    attr17 = models.CharField(max_length=255, verbose_name='属性17', null=True, blank=True)
-    attr18 = models.CharField(max_length=255, verbose_name='属性18', null=True, blank=True)
-    attr19 = models.CharField(max_length=255, verbose_name='属性19', null=True, blank=True)
-    attr20 = models.CharField(max_length=255, verbose_name='属性20', null=True, blank=True)
-    attr21 = models.CharField(max_length=255, verbose_name='属性21', null=True, blank=True)
-    attr22 = models.CharField(max_length=255, verbose_name='属性22', null=True, blank=True)
-    attr23 = models.CharField(max_length=255, verbose_name='属性23', null=True, blank=True)
-    attr24 = models.CharField(max_length=255, verbose_name='属性24', null=True, blank=True)
-    attr25 = models.CharField(max_length=255, verbose_name='属性25', null=True, blank=True)
-    attr26 = models.CharField(max_length=255, verbose_name='属性26', null=True, blank=True)
-    attr27 = models.CharField(max_length=255, verbose_name='属性27', null=True, blank=True)
-    attr28 = models.CharField(max_length=255, verbose_name='属性28', null=True, blank=True)
-    attr29 = models.CharField(max_length=255, verbose_name='属性29', null=True, blank=True)
-    attr30 = models.CharField(max_length=255, verbose_name='属性30', null=True, blank=True)
+    attr10 = models.CharField(max_length=6000, verbose_name='属性10', null=True, blank=True)     
+    attr11 = models.CharField(max_length=6000, verbose_name='属性11', null=True, blank=True)
+    attr12 = models.CharField(max_length=6000, verbose_name='属性12', null=True, blank=True)
+    attr13 = models.CharField(max_length=6000, verbose_name='属性13', null=True, blank=True)
+    attr14 = models.CharField(max_length=6000, verbose_name='属性14', null=True, blank=True)
+    attr15 = models.CharField(max_length=6000, verbose_name='属性15', null=True, blank=True)
+    attr16 = models.CharField(max_length=6000, verbose_name='属性16', null=True, blank=True)
+    attr17 = models.CharField(max_length=6000, verbose_name='属性17', null=True, blank=True)
+    attr18 = models.CharField(max_length=6000, verbose_name='属性18', null=True, blank=True)
+    attr19 = models.CharField(verbose_name='属性19', null=True, blank=True)
+    attr20 = models.TextField(verbose_name='属性20', null=True, blank=True)
+    attr21 = models.TextField(verbose_name='属性21', null=True, blank=True)
+    attr22 = models.TextField(verbose_name='属性22', null=True, blank=True)
+    attr23 = models.TextField(verbose_name='属性23', null=True, blank=True)
+    attr24 = models.TextField(verbose_name='属性24', null=True, blank=True)
+    attr25 = models.JSONField(verbose_name='属性25', null=True, blank=True)
+    attr26 = models.JSONField(verbose_name='属性26', null=True, blank=True)
+    attr27 = models.JSONField(verbose_name='属性27', null=True, blank=True)
+    attr28 = models.JSONField(verbose_name='属性28', null=True, blank=True)
+    attr29 = models.JSONField(verbose_name='属性29', null=True, blank=True)
+    attr30 = models.JSONField(verbose_name='属性30', null=True, blank=True)
 
     class Meta:
         abstract = True
@@ -111,11 +112,15 @@ class MetadataModel(BaseModel):
         verbose_name_plural = '元数据模型'
 
 
-class AttrDefine(BaseModel):
+class AttrDefinitionModel(BaseModel):
     class Meta:
         db_table = 'attr_define'
         verbose_name = '属性定义'
         verbose_name_plural = '属性定义'
-    attr_type = models.CharField(max_length=255, verbose_name='属性类型')
+
+    attr_choices= [('text', '文本'),('json', 'JSON'),('number', '数字'),('date', '日期'),('time', '时间')]
+    attr_type = models.CharField(max_length=255, verbose_name='属性类型',choices=attr_choices, default='text')
     attr_name = models.CharField(max_length=255, verbose_name='属性名称')
+    attr_id = models.CharField(max_length=255,verbose_name='属性描述')
     attr_description = models.TextField(verbose_name='实体描述', null=True, blank=True)
+    
