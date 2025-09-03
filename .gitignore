@@ -1,11 +1,5 @@
 # 虚拟环境
 venv/
-.env/
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
 
 # Python 编译文件
 __pycache__/
@@ -53,9 +47,6 @@ htmlcov/
 *.tmp
 *.temp
 .cache/
-
-# 环境变量文件
-.env*
 
 # 虚拟环境相关
 *.pth
