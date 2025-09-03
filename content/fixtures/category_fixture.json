@@ -6,14 +6,7 @@
             "code": "0101",
             "name": "工业气体，单质",
             "description": "工业气体，单质",
-            "definition": null,
-            "level1": 1,
-            "create_time": null,
-            "update_time": null,
-            "is_delete": false,
-            "create_user": null,
-            "update_user": null,
-            "delete_at": null
+            "level1": 1
         }
     },
     {
@@ -23,14 +16,7 @@
             "code": "0102",
             "name": "用于工业，科学，农业，园艺，森林的工业化工原料",
             "description": "用于工业，科学，农业，园艺，森林的工业化工原料",
-            "definition": null,
-            "level1": 1,
-            "create_time": null,
-            "update_time": null,
-            "is_delete": false,
-            "create_user": null,
-            "update_user": null,
-            "delete_at": null
+            "level1": 1
         }
     },
     {
@@ -40,14 +26,7 @@
             "code": "0103",
             "name": "放射性元素，化学品",
             "description": "放射性元素，化学品",
-            "definition": null,
-            "level1": 1,
-            "create_time": null,
-            "update_time": null,
-            "is_delete": false,
-            "create_user": null,
-            "update_user": null,
-            "delete_at": null
+            "level1": 1
         }
     },
     {
@@ -57,14 +36,7 @@
             "code": "0104",
             "name": "用于工业，科学的化学品，化学制剂，不属于其他类别的产品用的化学制品",
             "description": "用于工业，科学的化学品，化学制剂，不属于其他类别的产品用的化学制品",
-            "definition": null,
-            "level1": 1,
-            "create_time": null,
-            "update_time": null,
-            "is_delete": false,
-            "create_user": null,
-            "update_user": null,
-            "delete_at": null
+            "level1": 1
         }
     },
     {
@@ -74,14 +46,7 @@
             "code": "0105",
             "name": "用于农业，园艺，森林的化学品，化学制剂",
             "description": "用于农业，园艺，森林的化学品，化学制剂",
-            "definition": null,
-            "level1": 1,
-            "create_time": null,
-            "update_time": null,
-            "is_delete": false,
-            "create_user": null,
-            "update_user": null,
-            "delete_at": null
+            "level1": 1
         }
     },
     {
@@ -91,14 +56,7 @@
             "code": "0106",
             "name": "化学试剂",
             "description": "化学试剂",
-            "definition": null,
-            "level1": 1,
-            "create_time": null,
-            "update_time": null,
-            "is_delete": false,
-            "create_user": null,
-            "update_user": null,
-            "delete_at": null
+            "level1": 1
         }
     },
     {
@@ -108,14 +66,7 @@
             "code": "0107",
             "name": "摄影用化学用品，材料",
             "description": "摄影用化学用品，材料",
-            "definition": null,
-            "level1": 1,
-            "create_time": null,
-            "update_time": null,
-            "is_delete": false,
-            "create_user": null,
-            "update_user": null,
-            "delete_at": null
+            "level1": 1
         }
     },
     {
@@ -125,14 +76,7 @@
             "code": "0108",
             "name": "未加工的人造合成树脂，未加工塑料物质（不包括未加工的天然树脂）",
             "description": "未加工的人造合成树脂，未加工塑料物质（不包括未加工的天然树脂）",
-            "definition": null,
-            "level1": 1,
-            "create_time": null,
-            "update_time": null,
-            "is_delete": false,
-            "create_user": null,
-            "update_user": null,
-            "delete_at": null
+            "level1": 1
         }
     },
     {
@@ -142,14 +86,7 @@
             "code": "0109",
             "name": "肥料",
             "description": "肥料",
-            "definition": null,
-            "level1": 1,
-            "create_time": null,
-            "update_time": null,
-            "is_delete": false,
-            "create_user": null,
-            "update_user": null,
-            "delete_at": null
+            "level1": 1
         }
     },
     {
@@ -159,14 +96,7 @@
             "code": "0110",
             "name": "灭火用合成物",
             "description": "灭火用合成物",
-            "definition": null,
-            "level1": 1,
-            "create_time": null,
-            "update_time": null,
-            "is_delete": false,
-            "create_user": null,
-            "update_user": null,
-            "delete_at": null
+            "level1": 1
         }
     },
     {
@@ -176,14 +106,7 @@
             "code": "0111",
             "name": "淬火用化学制剂",
             "description": "淬火用化学制剂",
-            "definition": null,
-            "level1": 1,
-            "create_time": null,
-            "update_time": null,
-            "is_delete": false,
-            "create_user": null,
-            "update_user": null,
-            "delete_at": null
+            "level1": 1
         }
     },
     {
@@ -193,14 +116,7 @@
             "code": "0112",
             "name": "焊接用化学制剂",
             "description": "焊接用化学制剂",
-            "definition": null,
-            "level1": 1,
-            "create_time": null,
-            "update_time": null,
-            "is_delete": false,
-            "create_user": null,
-            "update_user": null,
-            "delete_at": null
+            "level1": 1
         }
     },
     {
@@ -210,14 +126,7 @@
             "code": "0113",
             "name": "食品用化学品（不包括食品用防腐盐）",
             "description": "食品用化学品（不包括食品用防腐盐）",
-            "definition": null,
-            "level1": 1,
-            "create_time": null,
-            "update_time": null,
-            "is_delete": false,
-            "create_user": null,
-            "update_user": null,
-            "delete_at": null
+            "level1": 1
         }
     },
     {
@@ -227,14 +136,7 @@
             "code": "0114",
             "name": "鞣料，皮革用化学品",
             "description": "鞣料，皮革用化学品",
-            "definition": null,
-            "level1": 1,
-            "create_time": null,
-            "update_time": null,
-            "is_delete": false,
-            "create_user": null,
-            "update_user": null,
-            "delete_at": null
+            "level1": 1
         }
     },
     {
@@ -244,14 +146,7 @@
             "code": "0115",
             "name": "工业用粘合剂，胶（不包括纸用粘合剂）",
             "description": "工业用粘合剂，胶（不包括纸用粘合剂）",
-            "definition": null,
-            "level1": 1,
-            "create_time": null,
-            "update_time": null,
-            "is_delete": false,
-            "create_user": null,
-            "update_user": null,
-            "delete_at": null
+            "level1": 1
         }
     },
     {
@@ -261,14 +156,7 @@
             "code": "0116",
             "name": "纸浆",
             "description": "纸浆",
-            "definition": null,
-            "level1": 1,
-            "create_time": null,
-            "update_time": null,
-            "is_delete": false,
-            "create_user": null,
-            "update_user": null,
-            "delete_at": null
+            "level1": 1
         }
     },
     {
@@ -278,14 +166,7 @@
             "code": "0117",
             "name": "能源",
             "description": "能源",
-            "definition": null,
-            "level1": 1,
-            "create_time": null,
-            "update_time": null,
-            "is_delete": false,
-            "create_user": null,
-            "update_user": null,
-            "delete_at": null
+            "level1": 1
         }
     }
 ]
