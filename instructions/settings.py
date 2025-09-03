@@ -44,6 +44,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'content',
+    'core',
+
 ]
 
 MIDDLEWARE = [
@@ -82,11 +85,11 @@ WSGI_APPLICATION = 'instructions.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ.get('DB_NAME'),  # 数据库名称
-        'USER': os.environ.get('DB_USER'),      # PostgreSQL 用户名
+        'NAME': os.environ.get('DB_NAME', 'instructions'),  # 数据库名称
+        'USER': os.environ.get('DB_USER','instructions'),      # PostgreSQL 用户名
         'PASSWORD': os.environ.get('DB_PASSWORD'),  # PostgreSQL 密码
-        'HOST': os.environ.get('DB_HOST'),     # 数据库主机
-        'PORT': os.environ.get('DB_PORT'),          # PostgreSQL 端口
+        'HOST': os.environ.get('DB_HOST', 'localhost'),     # 数据库主机
+        'PORT': os.environ.get('DB_PORT','5432'),          # PostgreSQL 端口
     }
 }
 
@@ -120,6 +123,8 @@ TIME_ZONE = 'Asia/Shanghai'  # 上海时区
 USE_I18N = True
 
 USE_TZ = True
+
+AUTH_USER_MODEL = 'auth.User'
 
 
 # Static files (CSS, JavaScript, Images)

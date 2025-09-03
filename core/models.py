@@ -1,52 +1,16 @@
+import this
 from django.db import models
 from django.utils import timezone
 from django.contrib.contenttypes.models import ContentType
+from instructions.settings import AUTH_USER_MODEL
+
 
 class BaseManger(models.Manager):
 
     def get_queryset(self):
         # 重写基础查询集
-        return super().get_queryset().filter(is_deleted=False)
-
-    def all(self):
-        return super().get_queryset()
-   
-    def filter(self, *args, **kwargs):
-        return super().filter(*args, **kwargs).filter(is_deleted=False)
-
-    def exclude(self, *args, **kwargs):
-        return super().exclude(*args, **kwargs).filter(is_deleted=False)
-
-    def get(self, *args, **kwargs):
-        return super().get(*args, **kwargs).filter(is_deleted=False)
-
-    def first(self):
-        return super().first().filter(is_deleted=False)
-
-    def last(self):
-        return super().last().filter(is_deleted=False)
-
-    def count(self):
-        return super().count().filter(is_deleted=False)
-
-    def exists(self):
-        return super().exists().filter(is_deleted=False)    
-
-    def values(self, *args, **kwargs):
-        return super().values(*args, **kwargs).filter(is_deleted=False)
-
-    def values_list(self, *args, **kwargs):
-        return super().values_list(*args, **kwargs).filter(is_deleted=False)
-
-    def annotate(self, *args, **kwargs):
-        return super().annotate(*args, **kwargs).filter(is_deleted=False)
-
-    def order_by(self, *args, **kwargs):
-        return super().order_by(*args, **kwargs).filter(is_deleted=False)
-
-    def distinct(self, *args, **kwargs):
-        return super().distinct(*args, **kwargs).filter(is_deleted=False)
-
+        return super().get_queryset().filter(is_delete=False)
+        
 # Create your models here.
 class BaseModel(models.Model):
     class Meta:
@@ -55,18 +19,18 @@ class BaseModel(models.Model):
         verbose_name = '基础模型'
         verbose_name_plural = '基础模型'
     id = models.AutoField(primary_key=True, verbose_name='ID')
-    create_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
-    update_time = models.DateTimeField(auto_now=True, verbose_name='更新时间')
+    create_time = models.DateTimeField(auto_now_add=True, null=True, blank=True, verbose_name='创建时间')
+    update_time = models.DateTimeField(auto_now=True, null=True, blank=True, verbose_name='更新时间')
     is_delete = models.BooleanField(default=False, verbose_name='是否删除')
-    create_user = models.ForeignKey('user.User', on_delete=models.SET_NULL, null=True, blank=True, verbose_name='创建用户')
-    update_user = models.ForeignKey('user.User', on_delete=models.SET_NULL, null=True, blank=True, verbose_name='更新用户')
+    create_user = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='创建用户', related_name='%(class)s_create')
+    update_user = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='更新用户', related_name='%(class)s_update')
     delete_at = models.DateTimeField(null=True, blank=True, verbose_name='删除时间')
 
     objects = BaseManger()
 
     def delete(self, using=None, keep_parents=False):
-        self.is_deleted = True
-        self.deleted_at = timezone.now()
+        self.is_delete = True
+        self.delete_at = timezone.now()
         self.save()
 
         
