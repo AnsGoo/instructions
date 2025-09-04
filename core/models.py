@@ -1,9 +1,21 @@
+from django.contrib.admin.actions import delete_selected
 from django.db import models
 from django.utils import timezone
 from instructions.settings import AUTH_USER_MODEL
 
 
 class BaseManger(models.Manager):
+
+    def delete(self):
+        return super().update(is_delete=True, delete_at=timezone.now())
+    
+    def _chain(self):
+        return super()._chain().filter(is_delete=False)
+
+    def update(self, **kwargs):
+        del kwargs['is_delete']
+        return super().update(**kwargs)
+       
 
     def get_queryset(self):
         # 重写基础查询集
