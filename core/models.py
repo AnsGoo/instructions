@@ -1,7 +1,5 @@
-import this
 from django.db import models
 from django.utils import timezone
-from django.contrib.contenttypes.models import ContentType
 from instructions.settings import AUTH_USER_MODEL
 
 
@@ -37,6 +35,17 @@ class BaseModel(models.Model):
     def __str__(self):
         return str(self.id)
 
+
+
+class ModelDefinitionModel(BaseModel):
+    name = models.CharField(max_length=255, verbose_name='模型名称', null=True, blank=True)
+    code = models.CharField(max_length=255, verbose_name='模型类型', null=True, blank=True)
+    description = models.CharField(max_length=255, verbose_name='模型描述', null=True, blank=True)
+
+    class Meta:
+        db_table = 'attr_model'
+        verbose_name = '模型定义'
+        verbose_name_plural = '模型定义'
 
 class MetadataModel(BaseModel):
     attr1 = models.CharField(max_length=255, verbose_name='属性1', null=True, blank=True)
@@ -87,4 +96,5 @@ class AttrDefinitionModel(BaseModel):
     attr_name = models.CharField(max_length=255, verbose_name='属性名称')
     attr_id = models.CharField(max_length=255,verbose_name='属性描述')
     attr_description = models.TextField(verbose_name='实体描述', null=True, blank=True)
+    model = models.ForeignKey(ModelDefinitionModel, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='模型', related_name='%(class)s_model')
     

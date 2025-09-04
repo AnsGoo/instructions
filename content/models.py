@@ -1,6 +1,7 @@
+from turtle import mode
 from django.db import models
 
-from core.models import AttrDefinitionModel, BaseModel, MetadataModel
+from core.models import BaseModel, MetadataModel, ModelDefinitionModel
 
 # Create your models here.
 
@@ -10,7 +11,6 @@ class Level1Category(BaseModel):
     name = models.CharField(max_length=255, verbose_name='名称')
     description = models.TextField(verbose_name='描述')
     class Meta:
-        db_table = 'level1_category'   
         verbose_name = '一级分类'
         verbose_name_plural = '一级分类'
     
@@ -22,10 +22,9 @@ class Category(BaseModel):
     code = models.CharField(max_length=255, verbose_name='代码', unique=True)
     name = models.CharField(max_length=255, verbose_name='名称')
     description = models.TextField(verbose_name='描述')
-    definition = models.ForeignKey(AttrDefinitionModel, on_delete=models.SET_NULL, null=True, verbose_name='定义', db_constraint=False)
+    definition = models.OneToOneField(ModelDefinitionModel, on_delete=models.SET_NULL, null=True, verbose_name='定义', db_constraint=False)
     level1 = models.ForeignKey(Level1Category, on_delete=models.SET_NULL, null=True, verbose_name='一级分类', db_constraint=False)
     class Meta:
-        db_table = 'category'   
         verbose_name = '分类'
         verbose_name_plural = '分类'
     
@@ -47,7 +46,6 @@ class Content(MetadataModel):
     state = models.CharField(max_length=20, verbose_name='状态', choices=[('draft', '草稿'),('published', '已发布'),('archived', '已归档')], default='draft')
     
     class Meta:
-        db_table = 'content'
         verbose_name = '内容'
         verbose_name_plural = '内容'
     
