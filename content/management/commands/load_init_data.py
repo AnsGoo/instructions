@@ -2,7 +2,7 @@ from django.core.management.base import BaseCommand
 import json
 import os
 from content.models import Category, Level1Category
-from core.models import AttrDefinitionModel
+from core.models import ModelDefinitionModel
 
 class Command(BaseCommand):
     help = '导入分类数据并自动生成关联的定义对象'
@@ -67,12 +67,9 @@ class Command(BaseCommand):
                     
                     # 检查是否已有关联的definition
                     if not category.definition:
-                        # 创建对应的AttrDefinitionModel对象
-                        attr_definition = AttrDefinitionModel(
-                            attr_type='text',  # 默认使用text类型
-                            attr_name=f"分类_{fields['code']}_定义",
-                            attr_id=f"category_{fields['code']}",
-                            attr_description=f"分类'{fields['name']}'的属性定义"
+                        attr_definition = ModelDefinitionModel(
+                            name=fields['name'],
+                            code=fields['code'],
                         )
                         attr_definition.save()
                         created_definitions += 1

@@ -1,4 +1,6 @@
 from django.contrib import admin
+
+from core.models import AttrDefinitionModel
 from .models import Level1Category, Category, Content
 
 
@@ -43,13 +45,16 @@ class CategoryAdmin(admin.ModelAdmin):
         ('关联信息', {
             'fields': ('level1', 'definition')
         }),
-        ('元数据', {
+        ('审计数据', {
             'fields': ('create_time', 'update_time'),
             'classes': ('collapse',),
         }),
     )
     readonly_fields = ('code', 'name', 'level1', 'create_time', 'update_time')
+    attr_feild_map = dict()
     
+
+       
     # 禁止删除分类
     def has_delete_permission(self, request, obj=None):
         return False
@@ -61,11 +66,13 @@ class ContentAdmin(admin.ModelAdmin):
     list_display = ('id', 'code', 'title', 'category', 'document_type', 'state', 'create_time', 'update_time')
     list_filter = ('category', 'document_type', 'state')
     search_fields = ('code', 'title', 'abstract', 'summary', 'keyword')
+    attr_feild_map = dict()
+    
     ordering = ('-create_time',)
     list_per_page = 20
     autocomplete_fields = ('category',)
 
-    fieldsets = (
+    fieldsets = [
         ('基本信息', {
             'fields': ('code', 'title', 'document_type', 'state')
         }),
@@ -79,8 +86,35 @@ class ContentAdmin(admin.ModelAdmin):
             'fields': ('create_time', 'update_time'),
             'classes': ('collapse',),
         }),
-    )
+    ]
     readonly_fields = ('create_time', 'update_time')
+
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+        for key, field in form.base_fields.items():
+            label = self.attr_feild_map.get(key)
+            if label:
+                field.label = label
+        return form
+    
+    def get_object(self, request, object_id, from_field=None):
+        if len(self.fieldsets) > 4:
+            self.fieldsets.pop()
+        obj = super().get_object(request, object_id, from_field)
+        definition_id = obj.category.definition_id
+        attr_set = AttrDefinitionModel.objects.filter(model_id=definition_id)
+
+        ext_fields = []
+        for attr in attr_set:
+            ext_fields.append(attr.attr_id)
+            self.attr_feild_map[attr.attr_id] = f'{attr.attr_name}[{attr.attr_type}]'
+        
+        self.fieldsets.append(('扩展信息', {
+            'fields': ext_fields,
+            
+        }))
+
+        return obj
 
     # 自定义状态列的显示
     def get_state_display(self, obj):

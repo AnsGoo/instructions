@@ -7,7 +7,7 @@ class AttrDefinitionInline(admin.TabularInline):
     fields = ('attr_type', 'attr_name', 'attr_id')
     readonly_fields=('attr_type', 'attr_name', 'attr_id')
 
-    def has_add_permission(self, request, obj):
+    def has_add_permission(self, request, obj=None):
         return False
     def has_delete_permission(self, request, obj=None):
         return False
@@ -20,13 +20,14 @@ class ModelDefinitonModelAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'code', 'description')
     list_filter = ('name', 'code')
     search_fields = ('name', 'code')
+    fields = ('name', 'code', 'description')
     ordering = ('id',)
     list_per_page = 20
     inlines = [AttrDefinitionInline]
     readonly_fields = ('create_time', 'update_time','name','code')
 
 
-    def has_add_permission(self, request, obj):
+    def has_add_permission(self, request, obj=None):
         return False
     def has_delete_permission(self, request, obj=None):
         return False
@@ -42,7 +43,7 @@ class AttrDefinitionModelAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('基本信息', {
-            'fields': ('attr_type', 'attr_name', 'attr_id')
+            'fields': ('attr_type', 'attr_name', 'attr_id','model','attr_description')
         }),
         ('元数据', {
             'fields': ('create_time', 'update_time'),

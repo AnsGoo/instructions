@@ -47,6 +47,9 @@ class ModelDefinitionModel(BaseModel):
         verbose_name = '模型定义'
         verbose_name_plural = '模型定义'
 
+    def __str__(self):
+        return self.code +'-'+ self.name
+
 class MetadataModel(BaseModel):
     attr1 = models.CharField(max_length=255, verbose_name='属性1', null=True, blank=True)
     attr2 = models.CharField(max_length=255, verbose_name='属性2', null=True, blank=True)
@@ -94,7 +97,7 @@ class AttrDefinitionModel(BaseModel):
     attr_choices= [('text', '文本'),('json', 'JSON'),('number', '数字'),('date', '日期'),('time', '时间')]
     attr_type = models.CharField(max_length=255, verbose_name='属性类型',choices=attr_choices, default='text')
     attr_name = models.CharField(max_length=255, verbose_name='属性名称')
-    attr_id = models.CharField(max_length=255,verbose_name='属性描述')
-    attr_description = models.TextField(verbose_name='实体描述', null=True, blank=True)
+    attr_id = models.CharField(max_length=255,verbose_name='属性ID')
+    attr_description = models.TextField(verbose_name='属性描述', null=True, blank=True)
     model = models.ForeignKey(ModelDefinitionModel, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='模型', related_name='%(class)s_model')
     
