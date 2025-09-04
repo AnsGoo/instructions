@@ -21,6 +21,7 @@ class ModelDefinitonModelAdmin(admin.ModelAdmin):
     list_filter = ('name', 'code')
     search_fields = ('name', 'code')
     fields = ('name', 'code', 'description')
+    list_display_links = ( 'name', 'code')
     ordering = ('id',)
     list_per_page = 20
     inlines = [AttrDefinitionInline]

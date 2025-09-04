@@ -31,8 +31,9 @@ class Level1CategoryAdmin(admin.ModelAdmin):
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     """分类的管理界面配置"""
-    list_display = ('code', 'name', 'description', 'level1', 'definition', 'create_time', 'update_time')
+    list_display = ('code', 'name', 'description', 'level1')
     list_filter = ('level1',)
+    list_display_links = ('code', 'name')
     search_fields = ('code', 'name', 'description')
     ordering = ('code',)
     list_per_page = 20
@@ -59,6 +60,9 @@ class CategoryAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         return False
 
+    def has_add_permission(self, request, obj=None):
+        return False
+
 
 @admin.register(Content)
 class ContentAdmin(admin.ModelAdmin):
@@ -67,6 +71,7 @@ class ContentAdmin(admin.ModelAdmin):
     list_filter = ('category', 'document_type', 'state')
     search_fields = ('code', 'title', 'abstract', 'summary', 'keyword')
     attr_feild_map = dict()
+    list_display_links = ('code', 'title')
     
     ordering = ('-create_time',)
     list_per_page = 20
@@ -80,14 +85,15 @@ class ContentAdmin(admin.ModelAdmin):
             'fields': ('category', 'file', 'web_url')
         }),
         ('内容详情', {
-            'fields': ('abstract', 'summary', 'keyword')
+            'fields': ('abstract', 'summary', 'keyword'),
+            'classes': ('collapse',),
         }),
-        ('元数据', {
-            'fields': ('create_time', 'update_time'),
+        ('审计信息', {
+            'fields': ('create_time', 'update_time','create_user','update_user'),
             'classes': ('collapse',),
         }),
     ]
-    readonly_fields = ('create_time', 'update_time')
+    readonly_fields = ('create_time', 'update_time','create_user','update_user')
 
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
@@ -116,6 +122,12 @@ class ContentAdmin(admin.ModelAdmin):
 
         return obj
 
+
+    def save_model(self, request, obj, form, change):
+        if not change:
+            obj.create_user = request.user
+        obj.update_user = request.user
+        return super().save_model(request, obj, form, change)
     # 自定义状态列的显示
     def get_state_display(self, obj):
         return dict(obj._meta.get_field('state').flatchoices).get(obj.state, obj.state)
