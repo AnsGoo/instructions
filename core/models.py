@@ -15,11 +15,6 @@ class BaseManger(models.Manager):
     def update(self, **kwargs):
         del kwargs['is_delete']
         return super().update(**kwargs)
-       
-
-    def get_queryset(self):
-        # 重写基础查询集
-        return super().get_queryset().filter(is_delete=False)
         
 # Create your models here.
 class BaseModel(models.Model):
