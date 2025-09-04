@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'content',
     'core',
 
@@ -136,3 +137,10 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Django REST Framework 配置
+# 导入自定义的REST框架设置
+from instructions.rest_framework_settings import get_rest_framework_settings
+
+REST_FRAMEWORK = get_rest_framework_settings()

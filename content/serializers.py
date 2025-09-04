@@ -1,0 +1,110 @@
+from rest_framework import serializers
+from .models import Level1Category, Category, Content
+from core.models import ModelDefinitionModel
+
+
+class Level1CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Level1Category
+        fields = ['id', 'code', 'name', 'description']
+
+
+class ModelDefinitionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ModelDefinitionModel
+        fields = ['id', 'name', 'code', 'description']
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    # 嵌套序列化器，用于显示关联的一级分类和定义信息
+    level1 = Level1CategorySerializer(read_only=True)
+    definition = ModelDefinitionSerializer(read_only=True)
+    
+    # 在创建或更新时，需要使用id来关联
+    level1_id = serializers.IntegerField(write_only=True)
+    definition_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
+    
+    class Meta:
+        model = Category
+        fields = ['id', 'code', 'name', 'description', 'level1', 'definition', 'level1_id', 'definition_id']
+        read_only_fields = ['id']
+    
+    def create(self, validated_data):
+        # 获取关联对象的id
+        level1_id = validated_data.pop('level1_id')
+        definition_id = validated_data.pop('definition_id', None)
+        
+        # 创建Category对象
+        category = Category.objects.create(**validated_data)
+        
+        # 设置关联
+        category.level1_id = level1_id
+        if definition_id:
+            category.definition_id = definition_id
+        category.save()
+        
+        return category
+    
+    def update(self, instance, validated_data):
+        # 更新基本字段
+        instance.code = validated_data.get('code', instance.code)
+        instance.name = validated_data.get('name', instance.name)
+        instance.description = validated_data.get('description', instance.description)
+        
+        # 更新关联字段
+        if 'level1_id' in validated_data:
+            instance.level1_id = validated_data['level1_id']
+        if 'definition_id' in validated_data:
+            instance.definition_id = validated_data['definition_id']
+        
+        instance.save()
+        return instance
+
+
+class ContentSerializer(serializers.ModelSerializer):
+    # 嵌套序列化器，用于显示关联的分类信息
+    category = CategorySerializer(read_only=True)
+    
+    # 在创建或更新时，需要使用id来关联
+    category_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
+    
+    class Meta:
+        model = Content
+        fields = [
+            'id', 'code', 'title', 'category', 'file', 'abstract', 'summary',
+            'keyword', 'web_url', 'document_type', 'state', 'category_id'
+        ]
+        read_only_fields = ['id']
+    
+    def create(self, validated_data):
+        # 获取关联对象的id
+        category_id = validated_data.pop('category_id', None)
+        
+        # 创建Content对象
+        content = Content.objects.create(**validated_data)
+        
+        # 设置关联
+        if category_id:
+            content.category_id = category_id
+        content.save()
+        
+        return content
+    
+    def update(self, instance, validated_data):
+        # 更新基本字段
+        instance.code = validated_data.get('code', instance.code)
+        instance.title = validated_data.get('title', instance.title)
+        instance.file = validated_data.get('file', instance.file)
+        instance.abstract = validated_data.get('abstract', instance.abstract)
+        instance.summary = validated_data.get('summary', instance.summary)
+        instance.keyword = validated_data.get('keyword', instance.keyword)
+        instance.web_url = validated_data.get('web_url', instance.web_url)
+        instance.document_type = validated_data.get('document_type', instance.document_type)
+        instance.state = validated_data.get('state', instance.state)
+        
+        # 更新关联字段
+        if 'category_id' in validated_data:
+            instance.category_id = validated_data['category_id']
+        
+        instance.save()
+        return instance
