@@ -1,5 +1,29 @@
 from django.contrib import admin
+from django import forms
+
+from .models import MetadataModel
 from .models import AttrDefinitionModel, ModelDefinitionModel
+from django.db import connection
+# 创建自定义表单，将attr_id字段的组件类型改为Select组件
+class AttrDefinitionModelForm(forms.ModelForm):
+    fields = MetadataModel._meta.get_fields()
+    ATTR_TYPE_CHOICES = []
+    # 定义attr1-attr30的选项
+    for field in fields:
+        if field.name.startswith('attr'):
+            ATTR_TYPE_CHOICES.append((field.name, f'{field.verbose_name}-{field.db_type(connection)}'))
+    
+    # 将attr_id字段设置为Select组件
+    attr_id = forms.ChoiceField(
+        choices=ATTR_TYPE_CHOICES,
+        required=True,
+        label='属性ID',
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+    
+    class Meta:
+        model = AttrDefinitionModel
+        fields = '__all__'
 
 class AttrDefinitionInline(admin.TabularInline):
     model = AttrDefinitionModel
@@ -36,6 +60,7 @@ class ModelDefinitonModelAdmin(admin.ModelAdmin):
 @admin.register(AttrDefinitionModel)
 class AttrDefinitionModelAdmin(admin.ModelAdmin):
     """属性定义模型的管理界面配置"""
+    form = AttrDefinitionModelForm  # 使用自定义表单
     list_display = ('id', 'attr_type', 'attr_name', 'attr_id', 'create_time', 'update_time')
     list_filter = ('attr_type',)
     search_fields = ('attr_name', 'attr_id')

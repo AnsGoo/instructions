@@ -100,11 +100,13 @@ class AttrDefinitionModel(BaseModel):
         db_table = 'attr_define'
         verbose_name = '属性定义'
         verbose_name_plural = '属性定义'
+        unique_together = ('model', 'attr_id')
 
     attr_choices= [('text', '文本'),('json', 'JSON'),('number', '数字'),('date', '日期'),('time', '时间')]
     attr_type = models.CharField(max_length=255, verbose_name='属性类型',choices=attr_choices, default='text')
     attr_name = models.CharField(max_length=255, verbose_name='属性名称')
     attr_id = models.CharField(max_length=255,verbose_name='属性ID')
     attr_description = models.TextField(verbose_name='属性描述', null=True, blank=True)
+    attr_label = models.CharField(max_length=255, verbose_name='属性标签')
     model = models.ForeignKey(ModelDefinitionModel, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='模型', related_name='%(class)s_model')
     
