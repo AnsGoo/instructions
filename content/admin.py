@@ -113,7 +113,7 @@ class ContentAdmin(admin.ModelAdmin):
         ext_fields = []
         for attr in attr_set:
             ext_fields.append(attr.attr_id)
-            self.attr_feild_map[attr.attr_id] = f'{attr.attr_name}[{attr.attr_type}]'
+            self.attr_feild_map[attr.attr_id] = f'{attr.attr_label}[{attr.attr_name}]'
         
         self.fieldsets.append(('扩展信息', {
             'fields': ext_fields,
