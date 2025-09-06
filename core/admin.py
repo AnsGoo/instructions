@@ -14,9 +14,10 @@ class AttrDefinitionInline(admin.TabularInline):
     field_type_map =dict()
 
     def attr_type(self, obj):
+        prefix = MetadataModel.get_ext_prefix()
         if len(self.field_type_map.keys()) == 0:
             for field in MetadataModel._meta.get_fields():
-                if field.name.startswith('attr'):
+                if field.name.startswith(prefix):
                     self.field_type_map[field.name] = f'{field.verbose_name}-{field.db_type(connection)}'
         return self.field_type_map[obj.attr_id]
     
@@ -57,10 +58,12 @@ class ModelDefinitonModelAdmin(admin.ModelAdmin):
 # 创建自定义表单，将attr_id字段的组件类型改为Select组件
 class AttrDefinitionModelForm(forms.ModelForm):
     fields = MetadataModel._meta.get_fields()
+    prefix = MetadataModel.get_ext_prefix()
+
     ATTR_TYPE_CHOICES = []
     # 定义attr1-attr30的选项
     for field in fields:
-        if field.name.startswith('attr'):
+        if field.name.startswith(prefix):
             ATTR_TYPE_CHOICES.append((field.name, f'{field.verbose_name}-{field.db_type(connection)}'))
     
     # 将attr_id字段设置为Select组件
@@ -84,6 +87,7 @@ class AttrDefinitionModelAdmin(admin.ModelAdmin):
     search_fields = ('attr_name', 'attr_id','model__name')
     ordering = ('id',)
     list_per_page = 20
+    list_display_links=('attr_name','attr_id')
 
     fieldsets = (
         ('基本信息', {

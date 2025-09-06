@@ -122,6 +122,11 @@ class MetadataModel(BaseModel):
         abstract = True
         verbose_name = '元数据模型'
         verbose_name_plural = '元数据模型'
+    
+    @classmethod
+    def get_ext_prefix(cls):
+        """获取扩展字段的前缀"""
+        return 'attr'
 
 
     def save(self, *args, force_insert=False, force_update=False, using=None, update_fields=None):
@@ -200,7 +205,6 @@ class MetadataModel(BaseModel):
 
 
     def __getattr__(self,name):
-        print(name)
         if self.__attr_definition_cache.get(name) is not None:
             atrr = self.__attr_definition_cache.get(name)['attr_id']
             return self.__getattr__(atrr)
@@ -208,7 +212,6 @@ class MetadataModel(BaseModel):
             return super().__getattr__(name)
 
     def __setattr__(self, name, value) -> None:
-        # print(name,value)
         if self.__attr_definition_cache.get(name) is not None:
             atrr = self.__attr_definition_cache.get(name)['attr_id']
             return self.__setattr__(atrr, value)
