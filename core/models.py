@@ -64,7 +64,7 @@ class ModelDefinitionModel(BaseModel):
 
 
 
-class MetadataManger(BaseManger):
+class ExtModelManger(BaseManger):
 
     def create(self, **kwargs):
         self.transform(kwargs)
@@ -84,44 +84,16 @@ class MetadataManger(BaseManger):
         return data
 
 
-class MetadataModel(BaseModel):
-    attr1 = models.CharField(max_length=255, verbose_name='属性1', null=True, blank=True)
-    attr2 = models.CharField(max_length=255, verbose_name='属性2', null=True, blank=True)
-    attr3 = models.CharField(max_length=255, verbose_name='属性3', null=True, blank=True)
-    attr4 = models.CharField(max_length=255, verbose_name='属性4', null=True, blank=True)
-    attr5 = models.CharField(max_length=255, verbose_name='属性5', null=True, blank=True)
-    attr6 = models.CharField(max_length=255, verbose_name='属性6', null=True, blank=True)
-    attr7 = models.CharField(max_length=255, verbose_name='属性7', null=True, blank=True)
-    attr8 = models.CharField(max_length=255, verbose_name='属性8', null=True, blank=True)
-    attr9 = models.CharField(max_length=255, verbose_name='属性9', null=True, blank=True)
-    attr10 = models.CharField(max_length=6000, verbose_name='属性10', null=True, blank=True)     
-    attr11 = models.CharField(max_length=6000, verbose_name='属性11', null=True, blank=True)
-    attr12 = models.CharField(max_length=6000, verbose_name='属性12', null=True, blank=True)
-    attr13 = models.CharField(max_length=6000, verbose_name='属性13', null=True, blank=True)
-    attr14 = models.CharField(max_length=6000, verbose_name='属性14', null=True, blank=True)
-    attr15 = models.CharField(max_length=6000, verbose_name='属性15', null=True, blank=True)
-    attr16 = models.CharField(max_length=6000, verbose_name='属性16', null=True, blank=True)
-    attr17 = models.CharField(max_length=6000, verbose_name='属性17', null=True, blank=True)
-    attr18 = models.CharField(max_length=6000, verbose_name='属性18', null=True, blank=True)
-    attr19 = models.CharField(verbose_name='属性19', null=True, blank=True)
-    attr20 = models.TextField(verbose_name='属性20', null=True, blank=True)
-    attr21 = models.TextField(verbose_name='属性21', null=True, blank=True)
-    attr22 = models.TextField(verbose_name='属性22', null=True, blank=True)
-    attr23 = models.TextField(verbose_name='属性23', null=True, blank=True)
-    attr24 = models.TextField(verbose_name='属性24', null=True, blank=True)
-    attr25 = models.JSONField(verbose_name='属性25', null=True, blank=True)
-    attr26 = models.JSONField(verbose_name='属性26', null=True, blank=True)
-    attr27 = models.JSONField(verbose_name='属性27', null=True, blank=True)
-    attr28 = models.JSONField(verbose_name='属性28', null=True, blank=True)
-    attr29 = models.JSONField(verbose_name='属性29', null=True, blank=True)
-    attr30 = models.JSONField(verbose_name='属性30', null=True, blank=True)
+class ExtModel(BaseModel):
+   
 
-    objects = MetadataManger()
+    objects = ExtModelManger()
 
     class Meta:
         abstract = True
         verbose_name = '元数据模型'
         verbose_name_plural = '元数据模型'
+        abstract = True
     
     @classmethod
     def get_ext_prefix(cls):
