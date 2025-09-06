@@ -1,3 +1,4 @@
+from typing import Dict, Any
 from django.db import models
 from django.utils import timezone
 from instructions.settings import AUTH_USER_MODEL
@@ -10,6 +11,9 @@ class BaseManger(models.Manager):
     
     def _chain(self):
         return super()._chain().filter(is_delete=False)
+
+    def get_queryset(self):
+        return super().get_queryset().filter(is_delete=False)
 
     def update(self, **kwargs):
         del kwargs['is_delete']
@@ -36,6 +40,7 @@ class BaseModel(models.Model):
         self.is_delete = True
         self.delete_at = timezone.now()
         self.save()
+        return 1
 
         
     def __str__(self):
@@ -62,14 +67,21 @@ class ModelDefinitionModel(BaseModel):
 class MetadataManger(BaseManger):
 
     def create(self, **kwargs):
-        ext_fields = kwargs.pop('ext_fields', [])
+        self.transform(kwargs)
+        return super().create(**kwargs)
+
+    def update(self, **kwargs):
+        self.transform(kwargs)
+        return super().update(**kwargs)
+
+    def transform(self, data:Dict[str, Any]):
+        ext_fields = data.pop('ext_fields', [])
         for field in ext_fields:
             attr_name = field.attr_name
-            if attr_name in kwargs:
-                value = kwargs.pop(attr_name)
-                kwargs.setdefault(field.attr_id, value)
-       
-        return super().create(**kwargs)
+            if attr_name in data:
+                value = data.pop(attr_name)
+                data.setdefault(field.attr_id, value)
+        return data
 
 
 class MetadataModel(BaseModel):
@@ -112,10 +124,25 @@ class MetadataModel(BaseModel):
         verbose_name_plural = '元数据模型'
 
 
+    def save(self, *args, force_insert=False, force_update=False, using=None, update_fields=None):
+        update_field_list = []
+        ext_fields = self.get_extended_field_definitions()
+        if update_fields is not None:
+            for field_name in update_fields:
+                field_def = ext_fields.get(field_name, None)
+                if field_def:
+                    update_field_list.append(field_def.attr_id)
+                else:
+                    update_field_list.append(field_name)
+        else:
+            update_field_list = None
+                
+        return super().save(*args, force_insert=force_insert, force_update=force_update, using=using, update_fields=update_field_list)
+
     __model_id = None
 
 
-    __attr_definition_cache = dict()
+    __attr_definition_cache:Dict[str, Any] = dict()
 
     @classmethod
     def set_model_id(model_id):
@@ -151,19 +178,14 @@ class MetadataModel(BaseModel):
             
             if len(self.__attr_definition_cache.keys()) == 0:
                 # 获取与该模型关联的所有属性定义
-                try:
-                    attr_definitions = AttrDefinitionModel.objects.filter(model_id=model_id).all()
-                    for attr_def in attr_definitions:
-                        self._attr_definition_cache[attr_def.attr_name] = {
-                            'attr_name': attr_def.attr_name,
-                            'attr_id': attr_def.attr_id,
-                            'attr_description': attr_def.attr_description,
-                            'attr_label': attr_def.attr_label
-                        }
-                except Exception as e:
-                    # 处理可能的异常
-                    import logging
-                    logging.error(f"获取属性定义映射失败: {str(e)}")
+                attr_definitions = AttrDefinitionModel.objects.filter(model_id=self.model_id).all()
+                for attr_def in attr_definitions:
+                    self.__attr_definition_cache.setdefault(attr_def.attr_name, {
+                        'attr_name': attr_def.attr_name,
+                        'attr_id': attr_def.attr_id,
+                        'attr_description': attr_def.attr_description,
+                        'attr_label': attr_def.attr_label
+                    })
             
             return self.__attr_definition_cache
         except RecursionError:
@@ -178,6 +200,7 @@ class MetadataModel(BaseModel):
 
 
     def __getattr__(self,name):
+        print(name)
         if self.__attr_definition_cache.get(name) is not None:
             atrr = self.__attr_definition_cache.get(name)['attr_id']
             return self.__getattr__(atrr)
@@ -185,6 +208,7 @@ class MetadataModel(BaseModel):
             return super().__getattr__(name)
 
     def __setattr__(self, name, value) -> None:
+        # print(name,value)
         if self.__attr_definition_cache.get(name) is not None:
             atrr = self.__attr_definition_cache.get(name)['attr_id']
             return self.__setattr__(atrr, value)
@@ -199,7 +223,7 @@ class MetadataModel(BaseModel):
         if len(self.__attr_definition_cache.keys()) > 0:
             return self.__attr_definition_cache
         else:
-            return self._get_field_expression_map()
+            return self.__get_attr_definition_map()
 
 
 class AttrDefinitionModel(BaseModel):

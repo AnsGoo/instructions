@@ -66,6 +66,7 @@ class Content(MetadataModel):
         if self.category and self.category.definition:
             return self.category.definition_id
         return None
+
     
 class Document(BaseModel):
     name = models.CharField(max_length=255, verbose_name='名称')

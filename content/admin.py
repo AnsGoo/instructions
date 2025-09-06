@@ -11,6 +11,7 @@ class Level1CategoryAdmin(admin.ModelAdmin):
     search_fields = ('code', 'name', 'description')
     ordering = ('code',)
     list_per_page = 20
+    list_display_links = ('code', 'name')
 
     fieldsets = (
         ('基本信息', {
@@ -25,6 +26,9 @@ class Level1CategoryAdmin(admin.ModelAdmin):
     
     # 禁止删除一级分类
     def has_delete_permission(self, request, obj=None):
+        return False
+
+    def has_add_permission(self, request):
         return False
 
 

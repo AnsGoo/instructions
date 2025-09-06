@@ -115,9 +115,6 @@ class ContentViewSet(viewsets.ModelViewSet):
         """创建内容，自动关联到URL中的分类"""
             
         return super().create(request, *args, **kwargs)
-    
-    @action(detail=False, methods=['get'])
-    def by_state(self, request, category_id=None):
         """根据状态和分类获取内容列表"""
         state = request.query_params.get('state', None)
         if not state:
@@ -130,18 +127,8 @@ class ContentViewSet(viewsets.ModelViewSet):
     
     def perform_create(self, serializer):
         """创建内容，自动设置创建用户和关联分类"""
-        category_id = self.kwargs.get('category_id')
-        # 确保关联到正确的分类
-        if category_id:
-            serializer.save(create_user=self.request.user, **self.kwargs)
-        else:
-            serializer.save(create_user=self.request.user)
+        serializer.save(create_user=self.request.user, **self.kwargs)
     
     def perform_update(self, serializer):
-        """更新内容，自动设置更新用户，确保分类不变"""
-        category_id = self.kwargs.get('category_id')
-        # 确保更新时不会更改分类
-        if category_id:
-            serializer.save(update_user=self.request.user, **self.kwargs)
-        else:
-            serializer.save(update_user=self.request.user)
+        """更新内容，自动设置更新用户"""
+        serializer.save(update_user=self.request.user, **self.kwargs)

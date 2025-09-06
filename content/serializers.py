@@ -104,11 +104,8 @@ class ContentSerializer(serializers.ModelSerializer):
         instance.summary = validated_data.get('summary', instance.summary)
         instance.keyword = validated_data.get('keyword', instance.keyword)
         instance.web_url = validated_data.get('web_url', instance.web_url)
-        instance.document_type = validated_data.get('document_type', instance.document_type)
-        
-        # 更新关联字段
-        if 'category_id' in validated_data:
-            instance.category_id = validated_data['category_id']
+        validated_data.pop('category_id', None)
+        validated_data.pop('definition_id', None)
         
         instance.save()
         return instance
