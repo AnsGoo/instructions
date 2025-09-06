@@ -3,6 +3,9 @@ from django import forms
 
 from .models import AttrDefinitionModel
 from django.db import connection
+from django.core.exceptions import ValidationError
+from django.core import validators
+from django.utils.deconstruct import deconstructible
 
 class AttrDefinitionInline(admin.TabularInline):
     model = AttrDefinitionModel
@@ -76,14 +79,30 @@ class AttrDefinitionModelAdmin(admin.ModelAdmin):
 
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
-        
         if 'attr_id' not in form.base_fields:
             return form
-
+        cur_model_id = request.POST.get('model')
+        all_attrname_list = []
+        if cur_model_id:
+            exits_attr_queryset = self.model.objects.filter(model_id=cur_model_id).values_list('attr_name', flat=True)
+            if exits_attr_queryset.exists():
+                for attr_name in exits_attr_queryset:
+                    all_attrname_list.append(attr_name)
         ext_model = self.admin_site.ext_model
         fields = ext_model._meta.get_fields()
+
+        for field in fields:
+            all_attrname_list.append(field.name)
+
+        def ConflictValidator(value):
+            if value in all_attrname_list:
+                raise ValidationError(message=f'属性{value}已存在', code='attr_conflict')
+
+        form.base_fields['attr_name'].validators.append(ConflictValidator)
+
         prefix = ext_model.get_ext_prefix()
         ATTR_TYPE_CHOICES = []
+        print(form.base_fields['attr_id'])
         for field in fields:
             if field.name.startswith(prefix):
                 ATTR_TYPE_CHOICES.append((field.name, f'{field.verbose_name}-{field.db_type(connection)}'))
@@ -93,5 +112,8 @@ class AttrDefinitionModelAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         return super().get_queryset(request).select_related('model')
 
-    def has_change_permission(self, request, obj=None):
-        return False
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj:
+            return self.readonly_fields + ('attr_id','model')
+        return self.readonly_fields
