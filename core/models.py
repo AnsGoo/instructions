@@ -242,3 +242,5 @@ class AttrDefinitionModel(BaseModel):
     attr_label = models.CharField(max_length=255, verbose_name='属性标签')
     model = models.ForeignKey(ModelDefinitionModel, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='模型', related_name='%(class)s_model')
     
+    def __str__(self) -> str:
+        return f'{self.attr_label}[{self.attr_name}]'

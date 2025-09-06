@@ -2,6 +2,7 @@ from django.contrib import admin
 
 from core.models import AttrDefinitionModel
 from .models import Level1Category, Category, Content, Document
+from core.register import register_admin
 
 
 @admin.register(Level1Category)
@@ -181,3 +182,5 @@ class DocumentAdmin(admin.ModelAdmin):
             obj.create_user = request.user
         obj.update_user = request.user
         return super().save_model(request, obj, form, change)
+
+register_admin(Content)
