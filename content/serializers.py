@@ -1,4 +1,5 @@
 from rest_framework import serializers
+
 from .models import Level1Category, Category, Content
 from core.models import  ModelDefinitionModel
 
@@ -62,7 +63,7 @@ class ContentSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
     
     # 在创建或更新时，需要使用id来关联
-    category_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
+    category_id = serializers.IntegerField(read_only=True, required=False, allow_null=True)
     
     class Meta:
         model = Content
@@ -70,23 +71,23 @@ class ContentSerializer(serializers.ModelSerializer):
             'id', 'code', 'title', 'category', 'abstract', 'summary',
             'keyword', 'web_url', 'state', 'category_id', 'create_time', 'update_time', 'create_user', 'update_user'
         ]
-        read_only_fields = ['id', 'create_time', 'update_time', 'create_user', 'update_user']
+        read_only_fields = ['id', 'create_time', 'update_time', 'create_user', 'update_user','state','category_id']
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        
-        request = self.context.get('request')
-        ext_fields = request.ext_fields
+        views_kwargs = self.context.get('view').kwargs
+        ext_fields = views_kwargs.get('ext_fields')
         for attr in ext_fields:
             self.fields[attr.attr_name] = serializers.ModelField(model_field=self.Meta.model._meta.get_field(attr.attr_id))
-            self.fields[attr.attr_name].label = attr.attr_name
+            self.fields[attr.attr_name].label = attr.attr_label
     
     def create(self, validated_data):
         # 获取关联对象的id
         category_id = validated_data.pop('category_id', None)
-        
+        definition_id = validated_data.pop('definition_id', None)
         # 创建Content对象
         content = Content.objects.create(**validated_data)
+        content.model_id = definition_id
         
         # 设置关联
         if category_id:
@@ -104,7 +105,6 @@ class ContentSerializer(serializers.ModelSerializer):
         instance.keyword = validated_data.get('keyword', instance.keyword)
         instance.web_url = validated_data.get('web_url', instance.web_url)
         instance.document_type = validated_data.get('document_type', instance.document_type)
-        instance.state = validated_data.get('state', instance.state)
         
         # 更新关联字段
         if 'category_id' in validated_data:

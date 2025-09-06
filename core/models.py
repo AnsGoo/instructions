@@ -14,14 +14,6 @@ class BaseManger(models.Manager):
     def update(self, **kwargs):
         del kwargs['is_delete']
         return super().update(**kwargs)
-
-    
-    def set_model_id(self, model_id):
-        self.__model_id = model_id
-
-    @property
-    def model_id(self):
-        return self.__model_id
         
 # Create your models here.
 class BaseModel(models.Model):
@@ -51,6 +43,7 @@ class BaseModel(models.Model):
 
 
 
+
 class ModelDefinitionModel(BaseModel):
     name = models.CharField(max_length=255, verbose_name='模型名称', null=True, blank=True)
     code = models.CharField(max_length=255, verbose_name='模型类型', null=True, blank=True)
@@ -63,6 +56,21 @@ class ModelDefinitionModel(BaseModel):
 
     def __str__(self):
         return self.code +'-'+ self.name
+
+
+
+class MetadataManger(BaseManger):
+
+    def create(self, **kwargs):
+        ext_fields = kwargs.pop('ext_fields', [])
+        for field in ext_fields:
+            attr_name = field.attr_name
+            if attr_name in kwargs:
+                value = kwargs.pop(attr_name)
+                kwargs.setdefault(field.attr_id, value)
+       
+        return super().create(**kwargs)
+
 
 class MetadataModel(BaseModel):
     attr1 = models.CharField(max_length=255, verbose_name='属性1', null=True, blank=True)
@@ -95,6 +103,8 @@ class MetadataModel(BaseModel):
     attr28 = models.JSONField(verbose_name='属性28', null=True, blank=True)
     attr29 = models.JSONField(verbose_name='属性29', null=True, blank=True)
     attr30 = models.JSONField(verbose_name='属性30', null=True, blank=True)
+
+    objects = MetadataManger()
 
     class Meta:
         abstract = True
