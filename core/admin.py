@@ -82,23 +82,31 @@ class AttrDefinitionModelAdmin(admin.ModelAdmin):
         if 'attr_id' not in form.base_fields:
             return form
         cur_model_id = request.POST.get('model')
-        all_attrname_list = []
+        all_attrname_set = set()
+        exists_attrid_set = set()
         if cur_model_id:
-            exits_attr_queryset = self.model.objects.filter(model_id=cur_model_id).values_list('attr_name', flat=True)
+            exits_attr_queryset = self.model.objects.filter(model_id=cur_model_id).values_list('attr_name','attr_id')
             if exits_attr_queryset.exists():
-                for attr_name in exits_attr_queryset:
-                    all_attrname_list.append(attr_name)
+                for attr_name, attr_id in exits_attr_queryset:
+                    all_attrname_set.add(attr_name)
+                    exists_attrid_set.add(attr_id)
         ext_model = self.admin_site.ext_model
         fields = ext_model._meta.get_fields()
 
         for field in fields:
-            all_attrname_list.append(field.name)
+            all_attrname_set.add(field.name)
 
         def ConflictValidator(value):
-            if value in all_attrname_list:
+            if value in all_attrname_set:
                 raise ValidationError(message=f'属性{value}已存在', code='attr_conflict')
 
+        def UsedAttrValidator(value):
+            if value in exists_attrid_set:
+                raise ValidationError(message=f'属性{value}已被使用', code='attr_used')
+            return value
+        
         form.base_fields['attr_name'].validators.append(ConflictValidator)
+        form.base_fields['attr_id'].validators.append(UsedAttrValidator)
 
         prefix = ext_model.get_ext_prefix()
         ATTR_TYPE_CHOICES = []
