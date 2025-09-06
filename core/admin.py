@@ -4,26 +4,6 @@ from django import forms
 from .models import MetadataModel
 from .models import AttrDefinitionModel, ModelDefinitionModel
 from django.db import connection
-# 创建自定义表单，将attr_id字段的组件类型改为Select组件
-class AttrDefinitionModelForm(forms.ModelForm):
-    fields = MetadataModel._meta.get_fields()
-    ATTR_TYPE_CHOICES = []
-    # 定义attr1-attr30的选项
-    for field in fields:
-        if field.name.startswith('attr'):
-            ATTR_TYPE_CHOICES.append((field.name, f'{field.verbose_name}-{field.db_type(connection)}'))
-    
-    # 将attr_id字段设置为Select组件
-    attr_id = forms.ChoiceField(
-        choices=ATTR_TYPE_CHOICES,
-        required=True,
-        label='属性ID',
-        widget=forms.Select(attrs={'class': 'form-control'})
-    )
-    
-    class Meta:
-        model = AttrDefinitionModel
-        fields = '__all__'
 
 class AttrDefinitionInline(admin.TabularInline):
     model = AttrDefinitionModel
@@ -72,6 +52,29 @@ class ModelDefinitonModelAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         # 使用正确的反向关系名称，基于外键字段的related_name设置
         return super().get_queryset(request).prefetch_related('attrdefinitionmodel_model')
+
+
+# 创建自定义表单，将attr_id字段的组件类型改为Select组件
+class AttrDefinitionModelForm(forms.ModelForm):
+    fields = MetadataModel._meta.get_fields()
+    ATTR_TYPE_CHOICES = []
+    # 定义attr1-attr30的选项
+    for field in fields:
+        if field.name.startswith('attr'):
+            ATTR_TYPE_CHOICES.append((field.name, f'{field.verbose_name}-{field.db_type(connection)}'))
+    
+    # 将attr_id字段设置为Select组件
+    attr_id = forms.ChoiceField(
+        choices=ATTR_TYPE_CHOICES,
+        required=True,
+        label='属性ID',
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+    
+    class Meta:
+        model = AttrDefinitionModel
+        fields = '__all__'
+
 
 @admin.register(AttrDefinitionModel)
 class AttrDefinitionModelAdmin(admin.ModelAdmin):

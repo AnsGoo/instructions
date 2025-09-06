@@ -83,16 +83,27 @@ WSGI_APPLICATION = 'instructions.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ.get('DB_NAME', 'instructions'),  # 数据库名称
-        'USER': os.environ.get('DB_USER','instructions'),      # PostgreSQL 用户名
-        'PASSWORD': os.environ.get('DB_PASSWORD'),  # PostgreSQL 密码
-        'HOST': os.environ.get('DB_HOST', 'localhost'),     # 数据库主机
-        'PORT': os.environ.get('DB_PORT','5432'),          # PostgreSQL 端口
+# 根据DEBUG模式选择不同的数据库
+if DEBUG:
+    # 开发环境使用SQLite数据库
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',  # 数据库文件路径
+        }
     }
-}
+else:
+    # 生产环境使用PostgreSQL数据库
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': os.environ.get('DB_NAME', 'instructions'),  # 数据库名称
+            'USER': os.environ.get('DB_USER','instructions'),      # PostgreSQL 用户名
+            'PASSWORD': os.environ.get('DB_PASSWORD'),  # PostgreSQL 密码
+            'HOST': os.environ.get('DB_HOST', 'localhost'),     # 数据库主机
+            'PORT': os.environ.get('DB_PORT','5432'),          # PostgreSQL 端口
+        }
+    }
 
 
 # Password validation

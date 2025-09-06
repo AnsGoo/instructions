@@ -1,3 +1,6 @@
+from enum import unique
+from operator import index
+from tabnanny import verbose
 from turtle import mode
 from django.db import models
 
@@ -33,22 +36,44 @@ class Category(BaseModel):
 
 
 class Content(MetadataModel):
-    id = models.AutoField(primary_key=True, verbose_name='ID')
     code = models.CharField(max_length=255, verbose_name='编码')
     title = models.CharField(max_length=255, verbose_name='标题')
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, verbose_name='分类', db_constraint=False)
-    file = models.CharField(max_length=600, verbose_name='文件')
     abstract = models.TextField(verbose_name='摘要', null=True, blank=True)
     summary = models.TextField(verbose_name='总结', null=True, blank=True)
     keyword = models.CharField(max_length=1000, verbose_name='关键词', null=True, blank=True)
     web_url = models.CharField(max_length=600, verbose_name='链接', null=True, blank=True)
-    document_type = models.CharField(max_length=20, verbose_name='文档类型')
     state = models.CharField(max_length=20, verbose_name='状态', choices=[('draft', '草稿'),('published', '已发布'),('archived', '已归档')], default='draft')
     
     class Meta:
         verbose_name = '内容'
         verbose_name_plural = '内容'
+        indexes = [
+            models.Index(fields=['code']),
+            models.Index(fields=['title']),
+            models.Index(fields=['category']),
+            models.Index(fields=['state']),
+        ]
     
      
     def __str__(self):
        return self.title
+
+
+class Document(BaseModel):
+    name = models.CharField(max_length=255, verbose_name='名称')
+    path = models.CharField(max_length=600, verbose_name='路径')
+    size = models.IntegerField(verbose_name='大小')
+    type = models.CharField(max_length=20, verbose_name='类型')
+    order = models.IntegerField(verbose_name='顺序')
+    hex = models.CharField(max_length=255, verbose_name='哈希值',unique=True)
+    collection = models.ForeignKey(Content, on_delete=models.CASCADE,verbose_name='集合')
+    content = models.TextField(verbose_name='内容', null=True, blank=True)
+    class Meta:
+        verbose_name = '文档'
+        verbose_name_plural = '文档'
+        ordering = ('order',)
+        unique_together = ('collection', 'hex')
+    
+    def __str__(self):
+        return self.name + ' - ' + self.path

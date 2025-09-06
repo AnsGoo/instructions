@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from core.models import AttrDefinitionModel
-from .models import Level1Category, Category, Content
+from .models import Level1Category, Category, Content, Document
 
 
 @admin.register(Level1Category)
@@ -67,8 +67,8 @@ class CategoryAdmin(admin.ModelAdmin):
 @admin.register(Content)
 class ContentAdmin(admin.ModelAdmin):
     """内容的管理界面配置"""
-    list_display = ('id', 'code', 'title', 'category', 'document_type', 'state', 'create_time', 'update_time')
-    list_filter = ('category', 'document_type', 'state')
+    list_display = ('id', 'code', 'title', 'category', 'state', 'create_time', 'update_time')
+    list_filter = ('category', 'state')
     search_fields = ('code', 'title', 'abstract', 'summary', 'keyword')
     attr_feild_map = dict()
     list_display_links = ('code', 'title')
@@ -79,10 +79,10 @@ class ContentAdmin(admin.ModelAdmin):
 
     fieldsets = [
         ('基本信息', {
-            'fields': ('code', 'title', 'document_type', 'state')
+            'fields': ('code', 'title', 'state')
         }),
         ('关联与文件', {
-            'fields': ('category', 'file', 'web_url')
+            'fields': ('category', 'web_url')
         }),
         ('内容详情', {
             'fields': ('abstract', 'summary', 'keyword'),
@@ -117,7 +117,6 @@ class ContentAdmin(admin.ModelAdmin):
         
         self.fieldsets.append(('扩展信息', {
             'fields': ext_fields,
-            
         }))
 
         return obj
@@ -132,3 +131,49 @@ class ContentAdmin(admin.ModelAdmin):
     def get_state_display(self, obj):
         return dict(obj._meta.get_field('state').flatchoices).get(obj.state, obj.state)
     get_state_display.short_description = '状态'
+
+
+@admin.register(Document)
+class DocumentAdmin(admin.ModelAdmin):
+    """文档的管理界面配置"""
+    list_display = ('id', 'name', 'path', 'type', 'size', 'collection', 'order', 'create_time')
+    list_filter = ('type', 'collection')
+    search_fields = ('name', 'path', 'hex', 'content')
+    ordering = ('collection', 'order')
+    list_per_page = 20
+    autocomplete_fields = ('collection',)
+
+    fieldsets = [
+        ('基本信息', {
+            'fields': ('name', 'path', 'type', 'size', 'order', 'hex')
+        }),
+        ('关联信息', {
+            'fields': ('collection',)
+        }),
+        ('内容信息', {
+            'fields': ('content',),
+            'classes': ('collapse',),
+        }),
+        ('审计信息', {
+            'fields': ('create_time', 'update_time', 'create_user', 'update_user'),
+            'classes': ('collapse',),
+        }),
+    ]
+    readonly_fields = ('create_time', 'update_time', 'create_user', 'update_user')
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        # 可以在这里添加自定义的查询逻辑
+        return qs
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "collection":
+            # 可以在这里添加自定义的外键查询逻辑
+            pass
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
+    def save_model(self, request, obj, form, change):
+        if not change:
+            obj.create_user = request.user
+        obj.update_user = request.user
+        return super().save_model(request, obj, form, change)
