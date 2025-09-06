@@ -14,6 +14,14 @@ class BaseManger(models.Manager):
     def update(self, **kwargs):
         del kwargs['is_delete']
         return super().update(**kwargs)
+
+    
+    def set_model_id(self, model_id):
+        self.__model_id = model_id
+
+    @property
+    def model_id(self):
+        return self.__model_id
         
 # Create your models here.
 class BaseModel(models.Model):
@@ -92,6 +100,96 @@ class MetadataModel(BaseModel):
         abstract = True
         verbose_name = '元数据模型'
         verbose_name_plural = '元数据模型'
+
+
+    __model_id = None
+
+
+    __attr_definition_cache = dict()
+
+    @classmethod
+    def set_model_id(model_id):
+        self.__model_id = model_id
+
+    @property
+    def model_id(self):
+        """
+        获取模型ID，如果实例已保存则调用实例方法，否则使用类级别的ID
+        """
+        try:
+            if not self.__model_id:
+                self.__model_id = self.get_instance_model_id()
+            
+            return self.__model_id
+        except Exception:
+            # 如果出现异常，返回类级别的model_id
+            return self.__model_id
+
+    @model_id.setter
+    def model_id(self, model_id):
+        self.__model_id = model_id
+        self.__get_attr_definition_map()
+
+        
+    def __get_attr_definition_map(self):
+        """
+        获取属性定义映射，用于代理模式
+        返回格式: {attr_name: attr_id}
+        """
+        # 避免循环引用：使用try-except捕获可能的递归错误
+        try:
+            
+            if len(self.__attr_definition_cache.keys()) == 0:
+                # 获取与该模型关联的所有属性定义
+                try:
+                    attr_definitions = AttrDefinitionModel.objects.filter(model_id=model_id).all()
+                    for attr_def in attr_definitions:
+                        self._attr_definition_cache[attr_def.attr_name] = {
+                            'attr_name': attr_def.attr_name,
+                            'attr_id': attr_def.attr_id,
+                            'attr_description': attr_def.attr_description,
+                            'attr_label': attr_def.attr_label
+                        }
+                except Exception as e:
+                    # 处理可能的异常
+                    import logging
+                    logging.error(f"获取属性定义映射失败: {str(e)}")
+            
+            return self.__attr_definition_cache
+        except RecursionError:
+            # 如果发生递归错误，返回空字典
+            return {}
+        
+    def get_instance_model_id(self):
+        """
+        获取模型定义，由子类实现
+        """
+        raise NotImplementedError("子类必须实现get_instance_model_id方法")
+
+
+    def __getattr__(self,name):
+        if self.__attr_definition_cache.get(name) is not None:
+            atrr = self.__attr_definition_cache.get(name)['attr_id']
+            return self.__getattr__(atrr)
+        else:
+            return super().__getattr__(name)
+
+    def __setattr__(self, name, value) -> None:
+        if self.__attr_definition_cache.get(name) is not None:
+            atrr = self.__attr_definition_cache.get(name)['attr_id']
+            return self.__setattr__(atrr, value)
+        return super().__setattr__(name, value)
+
+    def get_extended_field_definitions(self):
+        """
+        获取所有扩展字段的定义元数据
+        返回格式: {field_label: {attr_name, attr_id, attr_description}}
+        """
+       
+        if len(self.__attr_definition_cache.keys()) > 0:
+            return self.__attr_definition_cache
+        else:
+            return self._get_field_expression_map()
 
 
 class AttrDefinitionModel(BaseModel):

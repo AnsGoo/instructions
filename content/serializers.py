@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Level1Category, Category, Content
-from core.models import ModelDefinitionModel
+from core.models import  ModelDefinitionModel
 
 
 class Level1CategorySerializer(serializers.ModelSerializer):
@@ -16,10 +16,6 @@ class ModelDefinitionSerializer(serializers.ModelSerializer):
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    # 嵌套序列化器，用于显示关联的一级分类和定义信息
-    level1 = Level1CategorySerializer(read_only=True)
-    definition = ModelDefinitionSerializer(read_only=True)
-    
     # 在创建或更新时，需要使用id来关联
     level1_id = serializers.IntegerField(write_only=True)
     definition_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
@@ -71,10 +67,19 @@ class ContentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Content
         fields = [
-            'id', 'code', 'title', 'category', 'file', 'abstract', 'summary',
-            'keyword', 'web_url', 'document_type', 'state', 'category_id'
+            'id', 'code', 'title', 'category', 'abstract', 'summary',
+            'keyword', 'web_url', 'state', 'category_id', 'create_time', 'update_time', 'create_user', 'update_user'
         ]
-        read_only_fields = ['id']
+        read_only_fields = ['id', 'create_time', 'update_time', 'create_user', 'update_user']
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        request = self.context.get('request')
+        ext_fields = request.ext_fields
+        for attr in ext_fields:
+            self.fields[attr.attr_name] = serializers.ModelField(model_field=self.Meta.model._meta.get_field(attr.attr_id))
+            self.fields[attr.attr_name].label = attr.attr_name
     
     def create(self, validated_data):
         # 获取关联对象的id
@@ -94,7 +99,6 @@ class ContentSerializer(serializers.ModelSerializer):
         # 更新基本字段
         instance.code = validated_data.get('code', instance.code)
         instance.title = validated_data.get('title', instance.title)
-        instance.file = validated_data.get('file', instance.file)
         instance.abstract = validated_data.get('abstract', instance.abstract)
         instance.summary = validated_data.get('summary', instance.summary)
         instance.keyword = validated_data.get('keyword', instance.keyword)

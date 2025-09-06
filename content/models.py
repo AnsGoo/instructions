@@ -4,7 +4,7 @@ from tabnanny import verbose
 from turtle import mode
 from django.db import models
 
-from core.models import BaseModel, MetadataModel, ModelDefinitionModel
+from core.models import BaseModel, MetadataModel, ModelDefinitionModel, AttrDefinitionModel
 
 # Create your models here.
 
@@ -54,12 +54,19 @@ class Content(MetadataModel):
             models.Index(fields=['category']),
             models.Index(fields=['state']),
         ]
-    
      
     def __str__(self):
        return self.title
 
 
+    def get_instance_model_id(self):
+        """
+        获取实例关联的模型定义ID
+        """
+        if self.category and self.category.definition:
+            return self.category.definition_id
+        return None
+    
 class Document(BaseModel):
     name = models.CharField(max_length=255, verbose_name='名称')
     path = models.CharField(max_length=600, verbose_name='路径')
