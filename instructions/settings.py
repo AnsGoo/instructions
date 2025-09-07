@@ -16,6 +16,10 @@ from pathlib import Path
 # 加载环境变量
 from dotenv import load_dotenv
 
+# Django REST Framework 配置
+# 导入自定义的REST框架设置
+from instructions.rest_framework_settings import get_rest_framework_settings
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -150,8 +154,6 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# Django REST Framework 配置
-# 导入自定义的REST框架设置
-from instructions.rest_framework_settings import get_rest_framework_settings
+
 
 REST_FRAMEWORK = get_rest_framework_settings()

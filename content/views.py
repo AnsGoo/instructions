@@ -1,4 +1,3 @@
-from django.template.base import kwarg_re
 from rest_framework import viewsets, filters
 from rest_framework.decorators import action
 from rest_framework.response import Response

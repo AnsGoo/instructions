@@ -121,10 +121,6 @@ class ExtModel(BaseModel):
 
     __attr_definition_cache:Dict[str, Any] = dict()
 
-    @classmethod
-    def set_model_id(model_id):
-        self.__model_id = model_id
-
     @property
     def model_id(self):
         """

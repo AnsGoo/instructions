@@ -1,4 +1,3 @@
-from types import MethodType
 from django.contrib import admin
 from core.models import AttrDefinitionModel, ModelDefinitionModel
 from core.admin import AttrDefinitionModelAdmin, ModelDefinitonModelAdmin

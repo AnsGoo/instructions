@@ -28,7 +28,7 @@ class Command(BaseCommand):
             self.stderr.write(f"错误: 找不到fixture文件 {fixture_path}")
             return
         
-        self.stdout.write(f"开始导入分类数据并自动生成定义对象...")
+        self.stdout.write("开始导入分类数据并自动生成定义对象...")
         self.stdout.write(f"使用fixture文件: {fixture_path}")
         
         try:
@@ -83,7 +83,7 @@ class Command(BaseCommand):
                         self.stdout.write(f"  分类 {fields['name']} 已有关联的定义对象")
             
             # 输出统计信息
-            self.stdout.write(f"\n导入完成！")
+            self.stdout.write("\n导入完成！")
             self.stdout.write(f"- 创建了 {created_definitions} 个定义对象")
             self.stdout.write(f"- 更新了 {updated_categories} 个分类对象")
             self.stdout.write("\n操作完成！")

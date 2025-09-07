@@ -4,8 +4,6 @@ from django import forms
 from .models import AttrDefinitionModel
 from django.db import connection
 from django.core.exceptions import ValidationError
-from django.core import validators
-from django.utils.deconstruct import deconstructible
 
 class AttrDefinitionInline(admin.TabularInline):
     model = AttrDefinitionModel
@@ -13,7 +11,7 @@ class AttrDefinitionInline(admin.TabularInline):
     fields = ('attr_id','attr_name' ,'attr_type', 'attr_label')
     readonly_fields=('attr_id','attr_name', 'attr_type', 'attr_label')
 
-    field_type_map =dict()
+    field_type_map = dict()
 
     def attr_type(self, obj):
         ext_model = self.admin_site.get_ext_model()

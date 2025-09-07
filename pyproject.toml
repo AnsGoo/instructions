@@ -21,5 +21,10 @@ allow-insecure-host = ["pypi.tuna.tsinghua.edu.cn"]
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
 default = true
 
+[dependency-groups]
+dev = [
+    "ruff>=0.12.12",
+]
+
 [project.scripts]
 dev = "manage:main"
