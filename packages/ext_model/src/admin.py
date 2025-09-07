@@ -15,6 +15,8 @@ class AttrDefinitionInline(admin.TabularInline):
     field_type_map = {}
 
     def attr_type(self, obj):
+        if not hasattr(self.admin_site, 'get_ext_model'):
+            raise Exception('AdminSite must implement get_ext_model')
         ext_model = self.admin_site.get_ext_model()
         prefix = ext_model.get_ext_prefix()
         if len(self.field_type_map.keys()) == 0:
@@ -37,9 +39,7 @@ class AttrDefinitionInline(admin.TabularInline):
     def has_change_permission(self, request, obj=None):
         return False
 
-
-# @admin.register(ModelDefinitionModel)
-class ModelDefinitonModelAdmin(admin.ModelAdmin):
+class ModelDefinitionModelAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'code', 'description')
     list_filter = ('name', 'code')
     search_fields = ('name', 'code')
@@ -61,7 +61,6 @@ class ModelDefinitonModelAdmin(admin.ModelAdmin):
         return super().get_queryset(request).prefetch_related('attrdefinitionmodel_model')
 
 
-# @admin.register(AttrDefinitionModel)
 class AttrDefinitionModelAdmin(admin.ModelAdmin):
     """属性定义模型的管理界面配置"""
 
@@ -104,6 +103,8 @@ class AttrDefinitionModelAdmin(admin.ModelAdmin):
         exists_attrid_set = set[str]()
         if cur_model_id:
             self.get_ext_attr(cur_model_id, all_attrname_set, exists_attrid_set)
+        if not hasattr(self.admin_site, 'get_ext_model'):
+            raise Exception('AdminSite must implement get_ext_model')
         ext_model: ExtModel = self.admin_site.get_ext_model()
         fields = ext_model._meta.get_fields()
 

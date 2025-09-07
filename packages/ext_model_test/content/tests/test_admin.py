@@ -1,16 +1,17 @@
-import json
 from unittest.mock import MagicMock, patch
 
 from django.contrib.admin.sites import AdminSite
 from django.contrib.auth import get_user_model
-from django.core.exceptions import ValidationError
 from django.test import RequestFactory, TestCase
 from django.urls import reverse
+from unittest.mock import MagicMock
+from unittest.mock import patch
 
-from ..admin import AttrDefinitionModelAdmin, ModelDefinitonModelAdmin
+from ext_model.admin import AttrDefinitionModelAdmin, ModelDefinitionModelAdmin
 
 # 导入ext_model的模型和admin
-from ..models import AttrDefinitionModel, ModelDefinitionModel
+from ext_model.models import AttrDefinitionModel, ModelDefinitionModel
+from content.models import ConcreteExtModel
 
 User = get_user_model()
 
@@ -20,15 +21,11 @@ class MockAdminSite(AdminSite):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._ext_model = None
 
     def get_ext_model(self):
         """获取扩展模型"""
-        return self._ext_model
+        return ConcreteExtModel
 
-    def set_ext_model(self, model):
-        """设置扩展模型"""
-        self._ext_model = model
 
 
 class ModelDefinitionAdminTest(TestCase):
@@ -56,7 +53,7 @@ class ModelDefinitionAdminTest(TestCase):
 
         # 创建Admin实例
         self.admin_site = MockAdminSite()
-        self.model_admin = ModelDefinitonModelAdmin(ModelDefinitionModel, self.admin_site)
+        self.model_admin = ModelDefinitionModelAdmin(ModelDefinitionModel, self.admin_site)
 
     def test_model_definition_list_display(self):
         """测试模型定义列表页面的显示字段"""
@@ -167,11 +164,6 @@ class AttrDefinitionAdminTest(TestCase):
         mock_field.verbose_name = '属性1'
         mock_field.db_type.return_value = 'varchar(255)'
 
-        self.mock_ext_model._meta.get_fields.return_value = [mock_field]
-
-        # 设置扩展模型
-        self.admin_site.set_ext_model(self.mock_ext_model)
-
     def test_attr_definition_list_display(self):
         """测试属性定义列表页面的显示字段"""
         url = reverse('admin:ext_model_attrdefinitionmodel_changelist')
@@ -261,6 +253,10 @@ class AdminIntegrationTest(TestCase):
         # 访问Admin首页
         url = reverse('admin:index')
         response = self.client.get(url)
+
+        # 打印响应状态码和内容，用于调试
+        print(f"Response status code: {response.status_code}")
+        print(f"Response content: {response.content.decode()[:200]}...")
 
         # 检查响应状态码
         self.assertEqual(response.status_code, 200)

@@ -114,14 +114,13 @@ class ExtModel(BaseModel):
     def __getattr__(self, name):
         if self.__attr_definition_cache.get(name) is not None:
             atrr = self.__attr_definition_cache.get(name)['attr_id']
-            return self.__getattr__(atrr)
-        else:
-            return super().__getattr__(name)
+            return getattr(self, atrr)
+        return super().__getattr__(name)
 
     def __setattr__(self, name, value) -> None:
         if self.__attr_definition_cache.get(name) is not None:
             atrr = self.__attr_definition_cache.get(name)['attr_id']
-            return self.__setattr__(atrr, value)
+            return setattr(self, atrr, value)
         return super().__setattr__(name, value)
 
     def save(self, *args, force_insert=False, force_update=False, using=None, update_fields=None):
