@@ -5,27 +5,26 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('content', '0002_remove_content_document_type_remove_content_file_and_more'),
+        ("content", "0002_remove_content_document_type_remove_content_file_and_more"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AddIndex(
-            model_name='content',
-            index=models.Index(fields=['code'], name='content_con_code_a3c4b2_idx'),
+            model_name="content",
+            index=models.Index(fields=["code"], name="content_con_code_a3c4b2_idx"),
         ),
         migrations.AddIndex(
-            model_name='content',
-            index=models.Index(fields=['title'], name='content_con_title_98e420_idx'),
+            model_name="content",
+            index=models.Index(fields=["title"], name="content_con_title_98e420_idx"),
         ),
         migrations.AddIndex(
-            model_name='content',
-            index=models.Index(fields=['category'], name='content_con_categor_f747ff_idx'),
+            model_name="content",
+            index=models.Index(fields=["category"], name="content_con_categor_f747ff_idx"),
         ),
         migrations.AddIndex(
-            model_name='content',
-            index=models.Index(fields=['state'], name='content_con_state_b2ea28_idx'),
+            model_name="content",
+            index=models.Index(fields=["state"], name="content_con_state_b2ea28_idx"),
         ),
     ]

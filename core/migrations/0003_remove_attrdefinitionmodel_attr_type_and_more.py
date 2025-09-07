@@ -4,19 +4,18 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('core', '0002_attrdefinitionmodel_attr_label_and_more'),
+        ("core", "0002_attrdefinitionmodel_attr_label_and_more"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='attrdefinitionmodel',
-            name='attr_type',
+            model_name="attrdefinitionmodel",
+            name="attr_type",
         ),
         migrations.AlterField(
-            model_name='attrdefinitionmodel',
-            name='attr_description',
-            field=models.CharField(blank=True, max_length=255, null=True, verbose_name='属性描述'),
+            model_name="attrdefinitionmodel",
+            name="attr_description",
+            field=models.CharField(blank=True, max_length=255, null=True, verbose_name="属性描述"),
         ),
     ]

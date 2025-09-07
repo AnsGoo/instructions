@@ -1,0 +1,65 @@
+# Set the maximum line length to 79.
+# Ruff 配置文件
+# https://docs.astral.sh/ruff/configuration/
+
+# 全局设置
+line-length = 100
+indent-width = 4
+
+[lint]
+# 选择默认规则集
+select = [
+    # 基础 PEP 8 规则
+    "E",  # 错误相关规则
+    "F",  # 代码质量规则
+    "W",  # 警告相关规则
+    
+    # 常见最佳实践
+    "B",  # flake8-bugbear
+    "C",  # flake8-comprehensions
+    "I",  # isort (导入排序)
+    
+    # 特定于 Django 的规则
+    "DJ", # flake8-django
+    
+    # 其他有用的规则
+    "PL", # pylint 精选规则
+    "UP", # pyupgrade 规则
+]
+
+# 排除某些规则
+ignore = [
+    # 允许未使用的导入（在某些情况下有用）
+    "F401",  # 未使用的导入
+    
+    # 允许某些常见的 Django 模式
+    "DJ001", # Model 没有 __str__ 方法
+    "DJ006", # Model 字段没有默认值
+    
+    # 允许灵活的行长度（除了 E501 之外）
+    "E501",  # 行太长
+]
+
+# 每个文件类型的规则覆盖
+[lint.per-file-ignores]
+"__init__.py" = ["F401"]  # 允许在 __init__.py 中未使用的导入
+"tests/*.py" = ["F841"]   # 允许在测试文件中未使用的变量
+
+# 导入排序配置
+[lint.isort]
+known-first-party = ["core", "content", "user", "instructions"]
+known-third-party = ["django", "rest_framework", "dotenv"]
+
+# 格式化配置（如果使用 Ruff 的格式化功能）
+[format]
+# 使用 Black 兼容的格式化样式
+line-ending = "auto"
+
+# 引号样式
+quote-style = "double"  # 使用双引号
+
+# 缩进样式
+indent-style = "space"  # 使用空格缩进
+
+# 允许在某些情况下省略括号
+skip-magic-trailing-comma = false
