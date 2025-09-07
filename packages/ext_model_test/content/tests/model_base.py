@@ -1,4 +1,6 @@
 from contextlib import nullcontext
+from os import name
+from tkinter import SE
 from django.contrib.auth.models import User
 from django.db import IntegrityError, connection
 from django.http import Http404
@@ -9,6 +11,7 @@ from django.db import models
 # 导入ext_model的模型
 from ext_model.models import AttrDefinitionModel, ExtModel, ModelDefinitionModel
 from content.models import ConcreteExtModel
+
 
 class ExtModelTestProject(TestCase):
     """
@@ -51,6 +54,7 @@ class ExtModelTestProject(TestCase):
             update_user=self.user,
         )
         self.mock_ext_model_class = ConcreteExtModel
+
     def test_basemodel_soft_delete(self):
         """测试BaseModel的软删除功能"""
         # 创建一个模型定义实例
@@ -158,9 +162,16 @@ class ExtModelTestProject(TestCase):
     def test_extmodel_functionality_with_definition(self):
         """测试ExtModel的功能"""
         # 创建测试实例
-        test_instance = self.mock_ext_model_class()
+        test_instance = self.mock_ext_model_class(
+            code='test_model', name='测试模型', description='测试模型描述'
+        )
         test_instance.definition = self.model_definition
         test_instance.model_id = self.model_definition.id  # 显式设置model_id以确保能找到属性定义
+        test_instance.save()
+        self.assertIsNotNone(test_instance.pk)
+        self.assertEqual(
+            self.mock_ext_model_class.objects.filter(pk=test_instance.pk).exists(), True
+        )
 
         # 不保存到数据库，因为动态创建的模型没有数据库表
         # 直接测试内存中的对象属性和方法
@@ -172,8 +183,16 @@ class ExtModelTestProject(TestCase):
         self.assertIn('test_attr1', ext_fields)
         self.assertIn('test_attr2', ext_fields)
         test_instance.test_attr1 = 'test_value1'
-        self.assertEqual(test_instance.test_attr1, 'test_value1')
-        self.assertEqual(test_instance.attr1, 'test_value1')
+        test_instance.save()
+        new_instance = self.mock_ext_model_class.objects.get(pk=test_instance.pk)
+        self.assertEqual(new_instance.test_attr1, 'test_value1')
+        self.assertEqual(new_instance.attr1, 'test_value1')
+
+        new_instance.test_attr3 = 'test_value3'
+        new_instance.save()
+        self.assertEqual(
+            self.mock_ext_model_class.objects.get(pk=test_instance.pk).test_attr3, None
+        )
 
     def test_model_manager(self):
         """测试自定义的BaseManger"""
