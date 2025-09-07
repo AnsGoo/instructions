@@ -104,7 +104,7 @@ class Content(ExtModel):
     def __str__(self):
         return self.title
 
-    def get_instance_model_id(self):
+    def get_ext_model_id(self):
         """
         获取实例关联的模型定义ID
         """

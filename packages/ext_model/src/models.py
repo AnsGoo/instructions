@@ -4,6 +4,7 @@ from typing import Any
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
+from docutils.nodes import definition
 
 AUTH_USER_MODEL = settings.AUTH_USER_MODEL
 
@@ -111,21 +112,9 @@ class ExtModel(BaseModel):
         verbose_name_plural = '元数据模型'
         abstract = True
 
-    def __getattr__(self, name):
-        if self.__attr_definition_cache.get(name) is not None:
-            atrr = self.__attr_definition_cache.get(name)['attr_id']
-            return getattr(self, atrr)
-        return super().__getattr__(name)
-
-    def __setattr__(self, name, value) -> None:
-        if self.__attr_definition_cache.get(name) is not None:
-            atrr = self.__attr_definition_cache.get(name)['attr_id']
-            return setattr(self, atrr, value)
-        return super().__setattr__(name, value)
-
     def save(self, *args, force_insert=False, force_update=False, using=None, update_fields=None):
         update_field_list = []
-        ext_fields = self.get_extended_field_definitions()
+        ext_fields = self.get_ext_field_definitions()
         if update_fields is not None:
             for field_name in update_fields:
                 field_def = ext_fields.get(field_name, None)
@@ -159,7 +148,7 @@ class ExtModel(BaseModel):
         """
         try:
             if not self.__model_id:
-                self.__model_id = self.get_instance_model_id()
+                self.__model_id = self.get_ext_model_id()
 
             return self.__model_id
         except Exception:
@@ -197,13 +186,13 @@ class ExtModel(BaseModel):
             # 如果发生递归错误，返回空字典
             return {}
 
-    def get_instance_model_id(self):
+    def get_ext_model_id(self):
         """
         获取模型定义，由子类实现
         """
-        raise NotImplementedError('子类必须实现get_instance_model_id方法')
+        raise NotImplementedError('子类必须实现get_ext_model_id方法')
 
-    def get_extended_field_definitions(self):
+    def get_ext_field_definitions(self):
         """
         获取所有扩展字段的定义元数据
         返回格式: {field_label: {attr_name, attr_id, attr_description}}
@@ -213,6 +202,19 @@ class ExtModel(BaseModel):
             return self.__attr_definition_cache
         else:
             return self.__get_attr_definition_map()
+
+    def update_ext_fields(self, data: dict[str, Any]):
+        """
+        更新扩展字段
+        """
+        definitions = self.get_ext_field_definitions()
+        for key, value in data.items():
+            if key in definitions:
+                field = definitions.get(key)
+                setattr(self, field.attr_id, value)
+            else:
+                setattr(self, key, value)
+        return self
 
 
 class AttrDefinitionModel(BaseModel):

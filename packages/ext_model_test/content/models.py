@@ -1,5 +1,5 @@
-from ext_model.models import ExtModel, ModelDefinitionModel
 from django.db import models
+from ext_model.models import ExtModel, ModelDefinitionModel
 
 
 class ConcreteExtModel(ExtModel):
@@ -38,7 +38,7 @@ class ConcreteExtModel(ExtModel):
 
     model_id = None
 
-    def get_instance_model_id(self):
+    def get_ext_model_id(self):
         """实现必要的抽象方法"""
         if self.model_id:
             return self.model_id
