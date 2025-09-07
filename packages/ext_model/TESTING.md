@@ -4,7 +4,7 @@
 
 ## 测试工程概述
 
-测试工程位于`src/tests.py`文件中，包含了对`ext_model`基础库中各种模型和功能的全面测试，包括：
+测试工程位于`src/tests/test_base.py`文件中，包含了对`ext_model`基础库中各种模型和功能的全面测试，包括：
 
 - **BaseModel**：测试基础模型的软删除功能、继承功能等
 - **ModelDefinitionModel**：测试模型定义的CRUD操作
@@ -39,7 +39,7 @@ python manage.py test ext_model
 如果你只想运行特定的测试用例，可以指定测试方法：
 
 ```bash
-python -m utils.manage test ext_model.tests.ExtModelTestProject.test_basemodel_soft_delete
+python -m utils.manage test ext_model.tests.test_base.ExtModelTestProject.test_basemodel_soft_delete
 ```
 
 ## 测试用例说明

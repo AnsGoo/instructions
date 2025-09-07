@@ -3,7 +3,7 @@ from django.db import IntegrityError, connection
 from django.test import TestCase
 
 # 导入ext_model的模型
-from .models import AttrDefinitionModel, ExtModel, ModelDefinitionModel
+from ..models import AttrDefinitionModel, ExtModel, ModelDefinitionModel
 
 
 class ExtModelTestProject(TestCase):

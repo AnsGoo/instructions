@@ -1,4 +1,19 @@
 """ext_model包初始化文件"""
+# 导入ext_model的主要模型和类
+def __getattr__(name):
+    # 延迟导入，避免循环导入问题
+    if name == 'BaseModel':
+        from .models import BaseModel
+        return BaseModel
+    if name == 'ModelDefinitionModel':
+        from .models import ModelDefinitionModel
+        return ModelDefinitionModel
+    if name == 'AttrDefinitionModel':
+        from .models import AttrDefinitionModel
+        return AttrDefinitionModel
+    if name == 'ExtModel':
+        from .models import ExtModel
+        return ExtModel
+    raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
-# 最基本的包初始化，不导入任何模块
-# 确保Python能够识别这个目录作为包
+__all__ = ['BaseModel', 'ModelDefinitionModel', 'AttrDefinitionModel', 'ExtModel']
