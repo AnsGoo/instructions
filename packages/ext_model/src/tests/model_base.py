@@ -1,6 +1,8 @@
 from django.contrib.auth.models import User
 from django.db import IntegrityError, connection
+from django.http import Http404
 from django.test import TestCase
+from django.shortcuts import get_object_or_404
 
 # 导入ext_model的模型
 from ..models import AttrDefinitionModel, ExtModel, ModelDefinitionModel
@@ -67,6 +69,9 @@ class ExtModelTestProject(TestCase):
         with self.assertRaises(ModelDefinitionModel.DoesNotExist):
             ModelDefinitionModel.objects.get(id=model_instance.id)
 
+        # 使用get_object_or_404获取实例
+        with self.assertRaises(Http404):
+            get_object_or_404(ModelDefinitionModel, id=model_instance.id)
         # 验证实例已被标记为删除但仍存在于数据库中
         self.assertFalse(ModelDefinitionModel.objects.filter(id=model_instance.id).exists())
 

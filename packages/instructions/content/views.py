@@ -32,12 +32,6 @@ class Level1CategoryViewSet(viewsets.ModelViewSet):
         """更新一级分类"""
         serializer.save()
 
-    @action(detail=False, methods=['get'])
-    def count(self, request):
-        """获取一级分类总数"""
-        count = self.get_queryset().count()
-        return Response({'count': count})
-
 
 class CategoryViewSet(viewsets.ModelViewSet):
     """分类视图集，提供CRUD操作"""
@@ -91,9 +85,7 @@ class ContentViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         """获取查询集，根据URL中的category_id过滤"""
-
         queryset = super().get_queryset()
-
         category_id = self.kwargs.get('category_id')
         if category_id:
             queryset = queryset.filter(category_id=category_id)
@@ -118,15 +110,6 @@ class ContentViewSet(viewsets.ModelViewSet):
         """创建内容，自动关联到URL中的分类"""
 
         return super().create(request, *args, **kwargs)
-        """根据状态和分类获取内容列表"""
-        state = request.query_params.get('state', None)
-        if not state:
-            return Response({'error': '缺少state参数'}, status=400)
-
-        # 确保内容属于指定分类
-        contents = self.get_queryset().filter(state=state)
-        serializer = self.get_serializer(contents, many=True)
-        return Response(serializer.data)
 
     def perform_create(self, serializer):
         """创建内容，自动设置创建用户和关联分类"""
