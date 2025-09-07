@@ -13,6 +13,7 @@ INSTRUCTIONS_DIR = os.path.join(PROJECT_ROOT, 'packages', 'instructions')
 
 def ensure_path(func):
     """装饰器，确保在执行命令前切换到正确的目录"""
+
     @wraps(func)
     def wrapper(*args, **kwargs):
         # 保存当前工作目录
@@ -22,6 +23,7 @@ def ensure_path(func):
         finally:
             # 恢复原来的工作目录
             os.chdir(original_dir)
+
     return wrapper
 
 
@@ -47,7 +49,7 @@ def format_code():
     try:
         subprocess.run([sys.executable, '-m', 'ruff', 'format', '.'], check=True)
     except FileNotFoundError:
-        print("错误: 未找到ruff工具。请安装ruff: pip install ruff")
+        print('错误: 未找到ruff工具。请安装ruff: pip install ruff')
         sys.exit(1)
 
 
@@ -57,7 +59,7 @@ def fix_code():
     try:
         subprocess.run([sys.executable, '-m', 'ruff', 'check', '--fix', '.'], check=True)
     except FileNotFoundError:
-        print("错误: 未找到ruff工具。请安装ruff: pip install ruff")
+        print('错误: 未找到ruff工具。请安装ruff: pip install ruff')
         sys.exit(1)
 
 
@@ -67,7 +69,7 @@ def lint_code():
     try:
         subprocess.run([sys.executable, '-m', 'ruff', 'check', '.'], check=True)
     except FileNotFoundError:
-        print("错误: 未找到ruff工具。请安装ruff: pip install ruff")
+        print('错误: 未找到ruff工具。请安装ruff: pip install ruff')
         sys.exit(1)
 
 
@@ -78,21 +80,24 @@ def run_arbitrary_command():
     run_django_server()
 
 
+ARGS_NUM = 2
+
+
 # 命令映射，用于直接执行特定的Django命令
 def main():
     """主入口函数，根据命令行参数执行相应的操作"""
-    if len(sys.argv) < 2:
-        print("用法: python -m utils.manage <command>")
-        print("可用命令:")
-        print("  runserver    - 启动Django开发服务器")
-        print("  migrate      - 应用数据库迁移")
-        print("  makemigrations - 创建新的数据库迁移")
-        print("  check        - 检查Django项目配置")
-        print("  createsuperuser - 创建Django超级用户")
-        print("  shell        - 启动Django交互式shell")
-        print("  format       - 使用Ruff格式化代码")
-        print("  fix          - 使用Ruff自动修复代码问题")
-        print("  lint         - 使用Ruff检查代码质量")
+    if len(sys.argv) < ARGS_NUM:
+        print('用法: python -m utils.manage <command>')
+        print('可用命令:')
+        print('  runserver    - 启动Django开发服务器')
+        print('  migrate      - 应用数据库迁移')
+        print('  makemigrations - 创建新的数据库迁移')
+        print('  check        - 检查Django项目配置')
+        print('  createsuperuser - 创建Django超级用户')
+        print('  shell        - 启动Django交互式shell')
+        print('  format       - 使用Ruff格式化代码')
+        print('  fix          - 使用Ruff自动修复代码问题')
+        print('  lint         - 使用Ruff检查代码质量')
         sys.exit(1)
 
     command = sys.argv[1]
@@ -124,41 +129,51 @@ def dev():
     """开发服务器入口点"""
     run_django_server()
 
+
 def runserver():
     """开发服务器入口点"""
     run_django_server()
+
 
 def migrate():
     """数据库迁移入口点"""
     run_django_command('migrate')
 
+
 def makemigrations():
     """创建迁移入口点"""
     run_django_command('makemigrations')
+
 
 def check():
     """检查项目配置入口点"""
     run_django_command('check')
 
+
 def createsuperuser():
     """创建超级用户入口点"""
     run_django_command('createsuperuser')
+
 
 def shell():
     """交互式shell入口点"""
     run_django_command('shell')
 
+
 def format():
     """代码格式化入口点"""
     format_code()
+
 
 def fix():
     """代码修复入口点"""
     fix_code()
 
+
 def lint():
     """代码检查入口点"""
     lint_code()
+
 
 def manage():
     """通用管理命令入口点"""
