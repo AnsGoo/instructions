@@ -16,7 +16,7 @@ class AttrDefinitionInline(admin.TabularInline):
     field_type_map =dict()
 
     def attr_type(self, obj):
-        ext_model = self.admin_site.ext_model
+        ext_model = self.admin_site.get_ext_model()
         prefix = ext_model.get_ext_prefix()
         if len(self.field_type_map.keys()) == 0:
             for field in ext_model._meta.get_fields():
@@ -90,7 +90,7 @@ class AttrDefinitionModelAdmin(admin.ModelAdmin):
                 for attr_name, attr_id in exits_attr_queryset:
                     all_attrname_set.add(attr_name)
                     exists_attrid_set.add(attr_id)
-        ext_model = self.admin_site.ext_model
+        ext_model = self.admin_site.get_ext_model()
         fields = ext_model._meta.get_fields()
 
         for field in fields:

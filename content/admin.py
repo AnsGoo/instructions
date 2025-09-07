@@ -183,4 +183,7 @@ class DocumentAdmin(admin.ModelAdmin):
         obj.update_user = request.user
         return super().save_model(request, obj, form, change)
 
-register_admin(Content)
+def get_ext_model(site:admin.AdminSite):
+    return Content
+
+register_admin(get_ext_model)
