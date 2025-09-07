@@ -14,8 +14,9 @@ def get_file_md5(chunk):
 
 
 def store_file(filename, hexcode, chunk):
-    file_path = Path(STORE_PATH).joinpath(hexcode).joinpath(filename)
+    root_path = Path(STORE_PATH)
+    file_path = root_path.joinpath(hexcode).joinpath(filename)
     file_path.parent.mkdir(parents=True, exist_ok=True)
     with open(file_path, 'wb') as f:
         f.write(chunk)
-    return file_path.absolute(), hexcode
+    return file_path.absolute().replace(root_path.absolute(), ''), hexcode
