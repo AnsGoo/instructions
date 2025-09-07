@@ -27,7 +27,6 @@ class MockAdminSite(AdminSite):
         return ConcreteExtModel
 
 
-
 class ModelDefinitionAdminTest(TestCase):
     """测试ModelDefinitionModelAdmin的功能"""
 
@@ -255,8 +254,8 @@ class AdminIntegrationTest(TestCase):
         response = self.client.get(url)
 
         # 打印响应状态码和内容，用于调试
-        print(f"Response status code: {response.status_code}")
-        print(f"Response content: {response.content.decode()[:200]}...")
+        print(f'Response status code: {response.status_code}')
+        print(f'Response content: {response.content.decode()[:200]}...')
 
         # 检查响应状态码
         self.assertEqual(response.status_code, 200)

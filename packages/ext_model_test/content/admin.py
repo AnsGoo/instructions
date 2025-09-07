@@ -4,6 +4,7 @@ from ext_model.register import register_admin
 
 # Register your models here.
 
+
 @admin.register(ConcreteExtModel)
 class ContentModelAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'code', 'description')

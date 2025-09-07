@@ -5,7 +5,6 @@ from django.core.management.base import BaseCommand
 from ext_model.models import ModelDefinitionModel
 
 
-
 class Command(BaseCommand):
     help = '导入分类数据并自动生成关联的定义对象'
 

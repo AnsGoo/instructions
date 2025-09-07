@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -19,29 +18,108 @@ class Migration(migrations.Migration):
             name='ConcreteExtModel',
             fields=[
                 ('id', models.AutoField(primary_key=True, serialize=False, verbose_name='ID')),
-                ('create_time', models.DateTimeField(auto_now_add=True, null=True, verbose_name='创建时间')),
-                ('update_time', models.DateTimeField(auto_now=True, null=True, verbose_name='更新时间')),
+                (
+                    'create_time',
+                    models.DateTimeField(auto_now_add=True, null=True, verbose_name='创建时间'),
+                ),
+                (
+                    'update_time',
+                    models.DateTimeField(auto_now=True, null=True, verbose_name='更新时间'),
+                ),
                 ('is_delete', models.BooleanField(default=False, verbose_name='是否删除')),
                 ('delete_at', models.DateTimeField(blank=True, null=True, verbose_name='删除时间')),
-                ('attr1', models.CharField(blank=True, max_length=255, null=True, verbose_name='测试属性1')),
+                (
+                    'attr1',
+                    models.CharField(
+                        blank=True, max_length=255, null=True, verbose_name='测试属性1'
+                    ),
+                ),
                 ('attr2', models.IntegerField(blank=True, null=True, verbose_name='测试属性2')),
                 ('attr3', models.FloatField(blank=True, null=True, verbose_name='测试属性3')),
                 ('attr4', models.DateField(blank=True, null=True, verbose_name='测试属性4')),
                 ('attr5', models.TextField(blank=True, null=True, verbose_name='测试属性5')),
-                ('attr6', models.JSONField(blank=True, max_length=255, null=True, verbose_name='测试属性6')),
+                (
+                    'attr6',
+                    models.JSONField(
+                        blank=True, max_length=255, null=True, verbose_name='测试属性6'
+                    ),
+                ),
                 ('attr7', models.TimeField(blank=True, null=True, verbose_name='测试属性7')),
-                ('attr8', models.EmailField(blank=True, max_length=255, null=True, verbose_name='测试属性8')),
-                ('attr9', models.URLField(blank=True, max_length=255, null=True, verbose_name='测试属性9')),
-                ('attr10', models.BooleanField(blank=True, default=False, max_length=255, null=True, verbose_name='测试属性10')),
-                ('attr11', models.BigIntegerField(blank=True, null=True, verbose_name='测试属性11')),
-                ('attr12', models.SmallIntegerField(blank=True, null=True, verbose_name='测试属性12')),
-                ('attr13', models.DecimalField(blank=True, decimal_places=2, max_digits=10, null=True, verbose_name='测试属性13')),
+                (
+                    'attr8',
+                    models.EmailField(
+                        blank=True, max_length=255, null=True, verbose_name='测试属性8'
+                    ),
+                ),
+                (
+                    'attr9',
+                    models.URLField(
+                        blank=True, max_length=255, null=True, verbose_name='测试属性9'
+                    ),
+                ),
+                (
+                    'attr10',
+                    models.BooleanField(
+                        blank=True,
+                        default=False,
+                        max_length=255,
+                        null=True,
+                        verbose_name='测试属性10',
+                    ),
+                ),
+                (
+                    'attr11',
+                    models.BigIntegerField(blank=True, null=True, verbose_name='测试属性11'),
+                ),
+                (
+                    'attr12',
+                    models.SmallIntegerField(blank=True, null=True, verbose_name='测试属性12'),
+                ),
+                (
+                    'attr13',
+                    models.DecimalField(
+                        blank=True,
+                        decimal_places=2,
+                        max_digits=10,
+                        null=True,
+                        verbose_name='测试属性13',
+                    ),
+                ),
                 ('attr14', models.DurationField(blank=True, null=True, verbose_name='测试属性14')),
                 ('attr15', models.DateTimeField(blank=True, null=True, verbose_name='测试属性15')),
                 ('attr16', models.UUIDField(blank=True, null=True, verbose_name='测试属性16')),
-                ('create_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='%(class)s_create', to=settings.AUTH_USER_MODEL, verbose_name='创建用户')),
-                ('definition', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='ext_model.modeldefinitionmodel', verbose_name='模型定义')),
-                ('update_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='%(class)s_update', to=settings.AUTH_USER_MODEL, verbose_name='更新用户')),
+                (
+                    'create_user',
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name='%(class)s_create',
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name='创建用户',
+                    ),
+                ),
+                (
+                    'definition',
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to='ext_model.modeldefinitionmodel',
+                        verbose_name='模型定义',
+                    ),
+                ),
+                (
+                    'update_user',
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name='%(class)s_update',
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name='更新用户',
+                    ),
+                ),
             ],
             options={
                 'verbose_name': '元数据模型',

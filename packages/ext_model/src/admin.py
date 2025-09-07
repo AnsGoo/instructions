@@ -39,6 +39,7 @@ class AttrDefinitionInline(admin.TabularInline):
     def has_change_permission(self, request, obj=None):
         return False
 
+
 class ModelDefinitionModelAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'code', 'description')
     list_filter = ('name', 'code')
