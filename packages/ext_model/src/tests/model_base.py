@@ -1,8 +1,8 @@
 from django.contrib.auth.models import User
 from django.db import IntegrityError, connection
 from django.http import Http404
-from django.test import TestCase
 from django.shortcuts import get_object_or_404
+from django.test import TestCase
 
 # 导入ext_model的模型
 from ..models import AttrDefinitionModel, ExtModel, ModelDefinitionModel
