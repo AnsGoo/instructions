@@ -4,7 +4,6 @@ from typing import Any
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
-from docutils.nodes import definition
 
 AUTH_USER_MODEL = settings.AUTH_USER_MODEL
 
@@ -211,7 +210,7 @@ class ExtModel(BaseModel):
         for key, value in data.items():
             if key in definitions:
                 field = definitions.get(key)
-                setattr(self, field.attr_id, value)
+                setattr(self, field['attr_id'], value)
             else:
                 setattr(self, key, value)
         return self

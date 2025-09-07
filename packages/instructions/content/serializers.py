@@ -127,16 +127,16 @@ class ContentSerializer(serializers.ModelSerializer):
 
         return content
 
-    def update(self, instance, validated_data):
+    def update(self, instance, validated_data: dict):
         # 更新基本字段
-        instance.code = validated_data.get('code', instance.code)
-        instance.title = validated_data.get('title', instance.title)
-        instance.abstract = validated_data.get('abstract', instance.abstract)
-        instance.summary = validated_data.get('summary', instance.summary)
-        instance.keyword = validated_data.get('keyword', instance.keyword)
-        instance.web_url = validated_data.get('web_url', instance.web_url)
+        instance.code = validated_data.pop('code', instance.code)
+        instance.title = validated_data.pop('title', instance.title)
+        instance.abstract = validated_data.pop('abstract', instance.abstract)
+        instance.summary = validated_data.pop('summary', instance.summary)
+        instance.keyword = validated_data.pop('keyword', instance.keyword)
+        instance.web_url = validated_data.pop('web_url', instance.web_url)
         validated_data.pop('category_id', None)
         validated_data.pop('definition_id', None)
-
+        instance.update_ext_fields(validated_data)
         instance.save()
         return instance
