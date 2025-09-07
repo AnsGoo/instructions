@@ -1,7 +1,7 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter, DynamicRoute, Route, SimpleRouter
 
-from .views import CategoryViewSet, ContentViewSet
+from .views import CategoryViewSet, ContentViewSet, DocumentViewSet
 
 
 # 为ContentViewSet创建自定义路由器
@@ -41,6 +41,7 @@ class CustomRouter(SimpleRouter):
 # 创建默认路由器并注册视图集
 router = DefaultRouter()
 router.register(r'categories', CategoryViewSet, basename='category')
+router.register(r'documents', DocumentViewSet, basename='document')
 
 # 创建自定义路由器并注册ContentViewSet
 content_router = CustomRouter()
