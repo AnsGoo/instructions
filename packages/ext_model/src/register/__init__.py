@@ -1,7 +1,7 @@
 from django.contrib import admin
 
-from core.admin import AttrDefinitionModelAdmin, ModelDefinitonModelAdmin
-from core.models import AttrDefinitionModel, ModelDefinitionModel
+from ..admin import AttrDefinitionModelAdmin, ModelDefinitonModelAdmin
+from ..models import AttrDefinitionModel, ModelDefinitionModel
 
 
 def register_admin(get_ext_model):

@@ -1,9 +1,11 @@
 from typing import Any
 
+# 使用Django的标准方式获取AUTH_USER_MODEL
+from django.conf import settings
 from django.db import models
 from django.utils import timezone
 
-from instructions.settings import AUTH_USER_MODEL
+AUTH_USER_MODEL = settings.AUTH_USER_MODEL
 
 
 class BaseManger(models.Manager):

@@ -1,5 +1,5 @@
 [project]
-name = "instructions"
+name = "instructions-project"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
@@ -9,6 +9,7 @@ dependencies = [
     "django-filter>=25.1",
     "djangorestframework>=3.16.1",
     "dotenv>=0.9.9",
+    "ext-model",
     "markdown>=3.8.2",
     "psycopg2-binary>=2.9.10",
 ]
@@ -27,4 +28,21 @@ dev = [
 ]
 
 [project.scripts]
-dev = "manage:main"
+dev = "utils.manage:dev"
+runserver = "utils.manage:runserver"
+format = "utils.manage:format"
+fix = "utils.manage:fix"
+check = "utils.manage:check"
+migrate = "utils.manage:migrate"
+makemigrations = "utils.manage:makemigrations"
+createsuperuser = "utils.manage:createsuperuser"
+shell = "utils.manage:shell"
+lint = "utils.manage:lint"
+manage = "utils.manage:manage"
+
+[tool.uv.sources]
+ext-model = { workspace = true }
+
+[tool.uv.workspace]
+members = ["packages/ext_model","packages/instructions"]
+

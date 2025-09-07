@@ -1,6 +1,5 @@
+from ext_model.models import ModelDefinitionModel
 from rest_framework import serializers
-
-from core.models import ModelDefinitionModel
 
 from .models import Category, Content, Level1Category
 

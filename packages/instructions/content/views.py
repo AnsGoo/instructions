@@ -1,10 +1,9 @@
+from ext_model.models import AttrDefinitionModel
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import APIException
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
-
-from core.models import AttrDefinitionModel
 
 from .models import Category, Content, Level1Category
 from .serializers import CategorySerializer, ContentSerializer, Level1CategorySerializer

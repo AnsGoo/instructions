@@ -2,9 +2,9 @@ import json
 import os
 
 from django.core.management.base import BaseCommand
+from ext_model.models import ModelDefinitionModel
 
 from content.models import Category, Level1Category
-from core.models import ModelDefinitionModel
 
 
 class Command(BaseCommand):

@@ -1,6 +1,5 @@
 from django.db import models
-
-from core.models import BaseModel, ExtModel, ModelDefinitionModel
+from ext_model.models import BaseModel, ExtModel, ModelDefinitionModel
 
 # Create your models here.
 

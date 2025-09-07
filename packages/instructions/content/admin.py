@@ -1,7 +1,6 @@
 from django.contrib import admin
-
-from core.models import AttrDefinitionModel
-from core.register import register_admin
+from ext_model.models import AttrDefinitionModel
+from ext_model.register import register_admin
 
 from .models import Category, Content, Document, Level1Category
 

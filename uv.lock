@@ -2,6 +2,13 @@ version = 1
 revision = 3
 requires-python = ">=3.12"
 
+[manifest]
+members = [
+    "ext-model",
+    "instructions",
+    "instructions-project",
+]
+
 [[package]]
 name = "asgiref"
 version = "3.9.1"
@@ -61,7 +68,49 @@ wheels = [
 ]
 
 [[package]]
+name = "ext-model"
+version = "0.1.0"
+source = { editable = "packages/ext_model" }
+dependencies = [
+    { name = "django" },
+    { name = "django-filter" },
+    { name = "djangorestframework" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "django", specifier = ">=5.2.5" },
+    { name = "django-filter", specifier = ">=25.1" },
+    { name = "djangorestframework", specifier = ">=3.16.1" },
+]
+
+[[package]]
 name = "instructions"
+version = "0.1.0"
+source = { virtual = "packages/instructions" }
+dependencies = [
+    { name = "django" },
+    { name = "django-filter" },
+    { name = "djangorestframework" },
+    { name = "dotenv" },
+    { name = "ext-model" },
+    { name = "markdown" },
+    { name = "psycopg2-binary" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "django", specifier = ">=5.2.5" },
+    { name = "django-filter", specifier = ">=25.1" },
+    { name = "djangorestframework", specifier = ">=3.16.1" },
+    { name = "dotenv", specifier = ">=0.9.9" },
+    { name = "ext-model", editable = "packages/ext_model" },
+    { name = "markdown", specifier = ">=3.8.2" },
+    { name = "psycopg2-binary", specifier = ">=2.9.10" },
+]
+
+[[package]]
+name = "instructions-project"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
@@ -69,6 +118,7 @@ dependencies = [
     { name = "django-filter" },
     { name = "djangorestframework" },
     { name = "dotenv" },
+    { name = "ext-model" },
     { name = "markdown" },
     { name = "psycopg2-binary" },
 ]
@@ -84,6 +134,7 @@ requires-dist = [
     { name = "django-filter", specifier = ">=25.1" },
     { name = "djangorestframework", specifier = ">=3.16.1" },
     { name = "dotenv", specifier = ">=0.9.9" },
+    { name = "ext-model", editable = "packages/ext_model" },
     { name = "markdown", specifier = ">=3.8.2" },
     { name = "psycopg2-binary", specifier = ">=2.9.10" },
 ]
