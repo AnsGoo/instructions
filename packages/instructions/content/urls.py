@@ -1,7 +1,7 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter, DynamicRoute, Route, SimpleRouter
 
-from .views import CategoryViewSet, ContentViewSet, Level1CategoryViewSet
+from .views import CategoryViewSet, ContentViewSet
 
 
 # 为ContentViewSet创建自定义路由器
@@ -40,7 +40,6 @@ class CustomRouter(SimpleRouter):
 
 # 创建默认路由器并注册视图集
 router = DefaultRouter()
-router.register(r'level1-categories', Level1CategoryViewSet, basename='level1category')
 router.register(r'categories', CategoryViewSet, basename='category')
 
 # 创建自定义路由器并注册ContentViewSet
@@ -54,11 +53,9 @@ urlpatterns = [
 ]
 
 # API端点汇总：
-# - 一级分类：/api/level1-categories/
 # - 分类：/api/categories/
 # - 内容：/api/{category_id}/contents/
 # 每个端点都支持GET, POST, PUT, PATCH, DELETE操作
 # 还包括自定义操作，如：
-# - 一级分类计数：/api/level1-categories/count/
 # - 按一级分类获取分类：/api/categories/by_level1/?level1_id=id
 # - 按状态获取内容：/api/{category_id}/contents/by_state/?state=状态值
