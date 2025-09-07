@@ -1,0 +1,23 @@
+{
+    "python.pythonPath": "${workspaceFolder}/.venv/Scripts/python.exe",
+    "python.autoComplete.extraPaths": [
+        "${workspaceFolder}/packages/instructions"
+    ],
+    "python.analysis.extraPaths": [
+        "${workspaceFolder}/packages/instructions"
+    ],
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": false,
+    "python.linting.flake8Enabled": false,
+    "python.linting.ruffEnabled": true,
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.fixAll": "explicit"
+    },
+    "files.eol": "\n",
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "[python]": {
+        "editor.defaultFormatter": "charliermarsh.ruff"
+    }
+}
