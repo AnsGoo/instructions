@@ -63,6 +63,9 @@ class ExtModelTestProject(TestCase):
 
         # 执行软删除
         model_instance.delete()
+        # 检查是否触发了信号（即软删除后使用get方法应该抛出DoesNotExist异常）
+        with self.assertRaises(ModelDefinitionModel.DoesNotExist):
+            ModelDefinitionModel.objects.get(id=model_instance.id)
 
         # 验证实例已被标记为删除但仍存在于数据库中
         self.assertFalse(ModelDefinitionModel.objects.filter(id=model_instance.id).exists())
