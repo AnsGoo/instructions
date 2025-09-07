@@ -1,7 +1,7 @@
 import hashlib
 from pathlib import Path
 
-from django.settings import STORE_PATH
+from django.conf import settings
 
 
 def get_file_md5(chunk):
@@ -14,7 +14,7 @@ def get_file_md5(chunk):
 
 
 def store_file(filename, hexcode, chunk):
-    root_path = Path(STORE_PATH)
+    root_path = Path(settings.STORE_PATH)
     file_path = root_path.joinpath(hexcode).joinpath(filename)
     file_path.parent.mkdir(parents=True, exist_ok=True)
     with open(file_path, 'wb') as f:
