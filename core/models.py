@@ -17,45 +17,45 @@ class BaseManger(models.Manager):
         return super().get_queryset().filter(is_delete=False)
 
     def update(self, **kwargs):
-        del kwargs["is_delete"]
+        del kwargs['is_delete']
         return super().update(**kwargs)
 
 
 # Create your models here.
 class BaseModel(models.Model):
-    id = models.AutoField(primary_key=True, verbose_name="ID")
+    id = models.AutoField(primary_key=True, verbose_name='ID')
     create_time = models.DateTimeField(
-        auto_now_add=True, null=True, blank=True, verbose_name="创建时间"
+        auto_now_add=True, null=True, blank=True, verbose_name='创建时间'
     )
     update_time = models.DateTimeField(
-        auto_now=True, null=True, blank=True, verbose_name="更新时间"
+        auto_now=True, null=True, blank=True, verbose_name='更新时间'
     )
-    is_delete = models.BooleanField(default=False, verbose_name="是否删除")
+    is_delete = models.BooleanField(default=False, verbose_name='是否删除')
     create_user = models.ForeignKey(
         AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        verbose_name="创建用户",
-        related_name="%(class)s_create",
+        verbose_name='创建用户',
+        related_name='%(class)s_create',
     )
     update_user = models.ForeignKey(
         AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        verbose_name="更新用户",
-        related_name="%(class)s_update",
+        verbose_name='更新用户',
+        related_name='%(class)s_update',
     )
-    delete_at = models.DateTimeField(null=True, blank=True, verbose_name="删除时间")
+    delete_at = models.DateTimeField(null=True, blank=True, verbose_name='删除时间')
 
     objects = BaseManger()
 
     class Meta:
         abstract = True
-        ordering = ["id"]
-        verbose_name = "基础模型"
-        verbose_name_plural = "基础模型"
+        ordering = ['id']
+        verbose_name = '基础模型'
+        verbose_name_plural = '基础模型'
 
     def __str__(self):
         return str(self.id)
@@ -68,17 +68,17 @@ class BaseModel(models.Model):
 
 
 class ModelDefinitionModel(BaseModel):
-    name = models.CharField(max_length=255, verbose_name="模型名称", null=True, blank=True)
-    code = models.CharField(max_length=255, verbose_name="模型类型", null=True, blank=True)
-    description = models.CharField(max_length=255, verbose_name="模型描述", null=True, blank=True)
+    name = models.CharField(max_length=255, verbose_name='模型名称', null=True, blank=True)
+    code = models.CharField(max_length=255, verbose_name='模型类型', null=True, blank=True)
+    description = models.CharField(max_length=255, verbose_name='模型描述', null=True, blank=True)
 
     class Meta:
-        db_table = "attr_model"
-        verbose_name = "模型定义"
-        verbose_name_plural = "模型定义"
+        db_table = 'attr_model'
+        verbose_name = '模型定义'
+        verbose_name_plural = '模型定义'
 
     def __str__(self):
-        return self.code + "-" + self.name
+        return self.code + '-' + self.name
 
 
 class ExtModelManger(BaseManger):
@@ -91,7 +91,7 @@ class ExtModelManger(BaseManger):
         return super().update(**kwargs)
 
     def transform(self, data: dict[str, Any]):
-        ext_fields = data.pop("ext_fields", [])
+        ext_fields = data.pop('ext_fields', [])
         for field in ext_fields:
             attr_name = field.attr_name
             if attr_name in data:
@@ -105,20 +105,20 @@ class ExtModel(BaseModel):
 
     class Meta:
         abstract = True
-        verbose_name = "元数据模型"
-        verbose_name_plural = "元数据模型"
+        verbose_name = '元数据模型'
+        verbose_name_plural = '元数据模型'
         abstract = True
 
     def __getattr__(self, name):
         if self.__attr_definition_cache.get(name) is not None:
-            atrr = self.__attr_definition_cache.get(name)["attr_id"]
+            atrr = self.__attr_definition_cache.get(name)['attr_id']
             return self.__getattr__(atrr)
         else:
             return super().__getattr__(name)
 
     def __setattr__(self, name, value) -> None:
         if self.__attr_definition_cache.get(name) is not None:
-            atrr = self.__attr_definition_cache.get(name)["attr_id"]
+            atrr = self.__attr_definition_cache.get(name)['attr_id']
             return self.__setattr__(atrr, value)
         return super().__setattr__(name, value)
 
@@ -149,7 +149,7 @@ class ExtModel(BaseModel):
     @classmethod
     def get_ext_prefix(cls):
         """获取扩展字段的前缀"""
-        return "attr"
+        return 'attr'
 
     @property
     def model_id(self):
@@ -184,10 +184,10 @@ class ExtModel(BaseModel):
                     self.__attr_definition_cache.setdefault(
                         attr_def.attr_name,
                         {
-                            "attr_name": attr_def.attr_name,
-                            "attr_id": attr_def.attr_id,
-                            "attr_description": attr_def.attr_description,
-                            "attr_label": attr_def.attr_label,
+                            'attr_name': attr_def.attr_name,
+                            'attr_id': attr_def.attr_id,
+                            'attr_description': attr_def.attr_description,
+                            'attr_label': attr_def.attr_label,
                         },
                     )
 
@@ -200,7 +200,7 @@ class ExtModel(BaseModel):
         """
         获取模型定义，由子类实现
         """
-        raise NotImplementedError("子类必须实现get_instance_model_id方法")
+        raise NotImplementedError('子类必须实现get_instance_model_id方法')
 
     def get_extended_field_definitions(self):
         """
@@ -215,26 +215,26 @@ class ExtModel(BaseModel):
 
 
 class AttrDefinitionModel(BaseModel):
-    attr_name = models.CharField(max_length=255, verbose_name="属性名称")
-    attr_id = models.CharField(max_length=255, verbose_name="属性ID")
+    attr_name = models.CharField(max_length=255, verbose_name='属性名称')
+    attr_id = models.CharField(max_length=255, verbose_name='属性ID')
     attr_description = models.CharField(
-        max_length=255, verbose_name="属性描述", null=True, blank=True
+        max_length=255, verbose_name='属性描述', null=True, blank=True
     )
-    attr_label = models.CharField(max_length=255, verbose_name="属性标签")
+    attr_label = models.CharField(max_length=255, verbose_name='属性标签')
     model = models.ForeignKey(
         ModelDefinitionModel,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        verbose_name="模型",
-        related_name="%(class)s_model",
+        verbose_name='模型',
+        related_name='%(class)s_model',
     )
 
     class Meta:
-        db_table = "attr_define"
-        verbose_name = "属性定义"
-        verbose_name_plural = "属性定义"
-        unique_together = ("model", "attr_id")
+        db_table = 'attr_define'
+        verbose_name = '属性定义'
+        verbose_name_plural = '属性定义'
+        unique_together = ('model', 'attr_id')
 
     def __str__(self) -> str:
-        return f"{self.attr_label}[{self.attr_name}]"
+        return f'{self.attr_label}[{self.attr_name}]'

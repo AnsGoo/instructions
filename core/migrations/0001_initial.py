@@ -14,139 +14,139 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name="ModelDefinitionModel",
+            name='ModelDefinitionModel',
             fields=[
-                ("id", models.AutoField(primary_key=True, serialize=False, verbose_name="ID")),
+                ('id', models.AutoField(primary_key=True, serialize=False, verbose_name='ID')),
                 (
-                    "create_time",
-                    models.DateTimeField(auto_now_add=True, null=True, verbose_name="创建时间"),
+                    'create_time',
+                    models.DateTimeField(auto_now_add=True, null=True, verbose_name='创建时间'),
                 ),
                 (
-                    "update_time",
-                    models.DateTimeField(auto_now=True, null=True, verbose_name="更新时间"),
+                    'update_time',
+                    models.DateTimeField(auto_now=True, null=True, verbose_name='更新时间'),
                 ),
-                ("is_delete", models.BooleanField(default=False, verbose_name="是否删除")),
-                ("delete_at", models.DateTimeField(blank=True, null=True, verbose_name="删除时间")),
+                ('is_delete', models.BooleanField(default=False, verbose_name='是否删除')),
+                ('delete_at', models.DateTimeField(blank=True, null=True, verbose_name='删除时间')),
                 (
-                    "name",
+                    'name',
                     models.CharField(
-                        blank=True, max_length=255, null=True, verbose_name="模型名称"
+                        blank=True, max_length=255, null=True, verbose_name='模型名称'
                     ),
                 ),
                 (
-                    "code",
+                    'code',
                     models.CharField(
-                        blank=True, max_length=255, null=True, verbose_name="模型类型"
+                        blank=True, max_length=255, null=True, verbose_name='模型类型'
                     ),
                 ),
                 (
-                    "description",
+                    'description',
                     models.CharField(
-                        blank=True, max_length=255, null=True, verbose_name="模型描述"
+                        blank=True, max_length=255, null=True, verbose_name='模型描述'
                     ),
                 ),
                 (
-                    "create_user",
+                    'create_user',
                     models.ForeignKey(
                         blank=True,
                         null=True,
                         on_delete=django.db.models.deletion.SET_NULL,
-                        related_name="%(class)s_create",
+                        related_name='%(class)s_create',
                         to=settings.AUTH_USER_MODEL,
-                        verbose_name="创建用户",
+                        verbose_name='创建用户',
                     ),
                 ),
                 (
-                    "update_user",
+                    'update_user',
                     models.ForeignKey(
                         blank=True,
                         null=True,
                         on_delete=django.db.models.deletion.SET_NULL,
-                        related_name="%(class)s_update",
+                        related_name='%(class)s_update',
                         to=settings.AUTH_USER_MODEL,
-                        verbose_name="更新用户",
+                        verbose_name='更新用户',
                     ),
                 ),
             ],
             options={
-                "verbose_name": "模型定义",
-                "verbose_name_plural": "模型定义",
-                "db_table": "attr_model",
+                'verbose_name': '模型定义',
+                'verbose_name_plural': '模型定义',
+                'db_table': 'attr_model',
             },
         ),
         migrations.CreateModel(
-            name="AttrDefinitionModel",
+            name='AttrDefinitionModel',
             fields=[
-                ("id", models.AutoField(primary_key=True, serialize=False, verbose_name="ID")),
+                ('id', models.AutoField(primary_key=True, serialize=False, verbose_name='ID')),
                 (
-                    "create_time",
-                    models.DateTimeField(auto_now_add=True, null=True, verbose_name="创建时间"),
+                    'create_time',
+                    models.DateTimeField(auto_now_add=True, null=True, verbose_name='创建时间'),
                 ),
                 (
-                    "update_time",
-                    models.DateTimeField(auto_now=True, null=True, verbose_name="更新时间"),
+                    'update_time',
+                    models.DateTimeField(auto_now=True, null=True, verbose_name='更新时间'),
                 ),
-                ("is_delete", models.BooleanField(default=False, verbose_name="是否删除")),
-                ("delete_at", models.DateTimeField(blank=True, null=True, verbose_name="删除时间")),
+                ('is_delete', models.BooleanField(default=False, verbose_name='是否删除')),
+                ('delete_at', models.DateTimeField(blank=True, null=True, verbose_name='删除时间')),
                 (
-                    "attr_type",
+                    'attr_type',
                     models.CharField(
                         choices=[
-                            ("text", "文本"),
-                            ("json", "JSON"),
-                            ("number", "数字"),
-                            ("date", "日期"),
-                            ("time", "时间"),
+                            ('text', '文本'),
+                            ('json', 'JSON'),
+                            ('number', '数字'),
+                            ('date', '日期'),
+                            ('time', '时间'),
                         ],
-                        default="text",
+                        default='text',
                         max_length=255,
-                        verbose_name="属性类型",
+                        verbose_name='属性类型',
                     ),
                 ),
-                ("attr_name", models.CharField(max_length=255, verbose_name="属性名称")),
-                ("attr_id", models.CharField(max_length=255, verbose_name="属性描述")),
+                ('attr_name', models.CharField(max_length=255, verbose_name='属性名称')),
+                ('attr_id', models.CharField(max_length=255, verbose_name='属性描述')),
                 (
-                    "attr_description",
-                    models.TextField(blank=True, null=True, verbose_name="实体描述"),
+                    'attr_description',
+                    models.TextField(blank=True, null=True, verbose_name='实体描述'),
                 ),
                 (
-                    "create_user",
+                    'create_user',
                     models.ForeignKey(
                         blank=True,
                         null=True,
                         on_delete=django.db.models.deletion.SET_NULL,
-                        related_name="%(class)s_create",
+                        related_name='%(class)s_create',
                         to=settings.AUTH_USER_MODEL,
-                        verbose_name="创建用户",
+                        verbose_name='创建用户',
                     ),
                 ),
                 (
-                    "update_user",
+                    'update_user',
                     models.ForeignKey(
                         blank=True,
                         null=True,
                         on_delete=django.db.models.deletion.SET_NULL,
-                        related_name="%(class)s_update",
+                        related_name='%(class)s_update',
                         to=settings.AUTH_USER_MODEL,
-                        verbose_name="更新用户",
+                        verbose_name='更新用户',
                     ),
                 ),
                 (
-                    "model",
+                    'model',
                     models.ForeignKey(
                         blank=True,
                         null=True,
                         on_delete=django.db.models.deletion.SET_NULL,
-                        related_name="%(class)s_model",
-                        to="core.modeldefinitionmodel",
-                        verbose_name="模型",
+                        related_name='%(class)s_model',
+                        to='core.modeldefinitionmodel',
+                        verbose_name='模型',
                     ),
                 ),
             ],
             options={
-                "verbose_name": "属性定义",
-                "verbose_name_plural": "属性定义",
-                "db_table": "attr_define",
+                'verbose_name': '属性定义',
+                'verbose_name_plural': '属性定义',
+                'db_table': 'attr_define',
             },
         ),
     ]

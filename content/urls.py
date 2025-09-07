@@ -9,29 +9,29 @@ class CustomRouter(SimpleRouter):
     routes = [
         # 列表路由
         Route(
-            url=r"^{prefix}/contents/$",
-            mapping={"get": "list", "post": "create"},
-            name="{basename}-list",
+            url=r'^{prefix}/contents/$',
+            mapping={'get': 'list', 'post': 'create'},
+            name='{basename}-list',
             detail=False,
-            initkwargs={"suffix": "List"},
+            initkwargs={'suffix': 'List'},
         ),
         # 详情路由
         Route(
-            url=r"^{prefix}/contents/(?P<pk>[^/.]+)/$",
+            url=r'^{prefix}/contents/(?P<pk>[^/.]+)/$',
             mapping={
-                "get": "retrieve",
-                "put": "update",
-                "patch": "partial_update",
-                "delete": "destroy",
+                'get': 'retrieve',
+                'put': 'update',
+                'patch': 'partial_update',
+                'delete': 'destroy',
             },
-            name="{basename}-detail",
+            name='{basename}-detail',
             detail=True,
-            initkwargs={"suffix": "Instance"},
+            initkwargs={'suffix': 'Instance'},
         ),
         # 动态路由
         DynamicRoute(
-            url=r"^{prefix}/contents/(?P<url_path>[^/]+)/$",
-            name="{basename}-{url_name}",
+            url=r'^{prefix}/contents/(?P<url_path>[^/]+)/$',
+            name='{basename}-{url_name}',
             detail=False,
             initkwargs={},
         ),
@@ -40,17 +40,17 @@ class CustomRouter(SimpleRouter):
 
 # 创建默认路由器并注册视图集
 router = DefaultRouter()
-router.register(r"level1-categories", Level1CategoryViewSet, basename="level1category")
-router.register(r"categories", CategoryViewSet, basename="category")
+router.register(r'level1-categories', Level1CategoryViewSet, basename='level1category')
+router.register(r'categories', CategoryViewSet, basename='category')
 
 # 创建自定义路由器并注册ContentViewSet
 content_router = CustomRouter()
-content_router.register(r"(?P<category_id>[^/.]+)", ContentViewSet, basename="content")
+content_router.register(r'(?P<category_id>[^/.]+)', ContentViewSet, basename='content')
 
 # 将路由器的URL包含进来
 urlpatterns = [
-    path("", include(router.urls)),
-    path("", include(content_router.urls)),
+    path('', include(router.urls)),
+    path('', include(content_router.urls)),
 ]
 
 # API端点汇总：
