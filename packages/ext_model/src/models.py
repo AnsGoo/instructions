@@ -19,8 +19,14 @@ class BaseManger(models.Manager):
         return super().get_queryset().filter(is_delete=False)
 
     def update(self, **kwargs):
-        del kwargs['is_delete']
+        if 'is_delete' in kwargs:
+            del kwargs['is_delete']
+        if 'delete_at' in kwargs:
+            del kwargs['delete_at']
         return super().update(**kwargs)
+
+    def all(self):
+        return super().all().filter(is_delete=False)
 
 
 # Create your models here.
