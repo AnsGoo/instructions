@@ -60,6 +60,7 @@ class Content(ExtModel):
         choices=[('draft', '草稿'), ('published', '已发布'), ('archived', '已归档')],
         default='draft',
     )
+    thumbnail = models.CharField(max_length=600, verbose_name='缩略图', null=True, blank=True)
     attr1 = models.CharField(max_length=255, verbose_name='属性1', null=True, blank=True)
     attr2 = models.CharField(max_length=255, verbose_name='属性2', null=True, blank=True)
     attr3 = models.CharField(max_length=255, verbose_name='属性3', null=True, blank=True)
@@ -118,7 +119,7 @@ class Document(BaseModel):
     name = models.CharField(max_length=255, verbose_name='名称')
     path = models.CharField(max_length=600, verbose_name='路径')
     size = models.IntegerField(verbose_name='大小')
-    type = models.CharField(max_length=20, verbose_name='类型')
+    mime_type = models.CharField(max_length=20, verbose_name='类型')
     order = models.IntegerField(verbose_name='顺序')
     hex = models.CharField(max_length=255, verbose_name='哈希值', unique=True)
     collection = models.ForeignKey(Content, on_delete=models.CASCADE, verbose_name='集合')

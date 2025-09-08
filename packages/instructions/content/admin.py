@@ -152,8 +152,8 @@ class ContentAdmin(admin.ModelAdmin):
 class DocumentAdmin(admin.ModelAdmin):
     """文档的管理界面配置"""
 
-    list_display = ('id', 'name', 'path', 'type', 'size', 'collection', 'order', 'create_time')
-    list_filter = ('type', 'collection')
+    list_display = ('id', 'name', 'path', 'mime_type', 'size', 'collection', 'order', 'create_time')
+    list_filter = ('mime_type', 'collection')
     search_fields = ('name', 'path', 'hex', 'content')
     ordering = ('collection', 'order')
     list_per_page = 20

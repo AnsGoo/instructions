@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'ext_model',
     'content',
+    'plugin',
 ]
 
 MIDDLEWARE = [
