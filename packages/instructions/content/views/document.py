@@ -1,4 +1,5 @@
 from django.db.models import F
+from django.shortcuts import get_object_or_404
 from rest_framework import filters, mixins, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
@@ -7,7 +8,7 @@ from rest_framework.viewsets import GenericViewSet
 
 from content.models import Document
 from content.serializers import DocumentSerializer, DocumentUploadSerializer
-from content.utils import get_file_md5, store_file
+from content.utils import convert_file, get_file_md5, store_file
 
 
 class DocumentViewSet(mixins.DestroyModelMixin, mixins.ListModelMixin, GenericViewSet):
@@ -41,3 +42,11 @@ class DocumentViewSet(mixins.DestroyModelMixin, mixins.ListModelMixin, GenericVi
             order=Document.objects.filter(collection_id=collection).count() + 1,
         )
         return Response(DocumentSerializer(document).data, status=status.HTTP_201_CREATED)
+
+    @action(methods=['GET'], detail=True, url_path='convert')
+    def convert(self, _request, pk=None):
+        doc_obj = get_object_or_404(Document, id=pk)
+        conten = convert_file(doc_obj.file)
+        doc_obj.content = conten
+        doc_obj.save()
+        return Response(DocumentSerializer(doc_obj).data, status=status.HTTP_200_OK)

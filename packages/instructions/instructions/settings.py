@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # 加载.env文件中的环境变量
 load_dotenv(os.path.join(BASE_DIR, '.env'))
-STORE_PATH = BASE_DIR.joinpath('store')
+STORE_PATH = BASE_DIR.parent.joinpath('store')
 STORE_PATH.mkdir(parents=True, exist_ok=True)
 
 
