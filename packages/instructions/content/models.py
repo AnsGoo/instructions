@@ -114,6 +114,7 @@ class Content(ExtModel):
 
 
 class Document(BaseModel):
+    CONTENT_TYPE_CHOICES = [('TEXT', 'TEXT'), ('MARKDOWN', 'MD'), ('CSV', 'CSV'), ('JSON', 'JSON')]
     name = models.CharField(max_length=255, verbose_name='名称')
     path = models.CharField(max_length=600, verbose_name='路径')
     size = models.IntegerField(verbose_name='大小')
@@ -122,6 +123,10 @@ class Document(BaseModel):
     hex = models.CharField(max_length=255, verbose_name='哈希值', unique=True)
     collection = models.ForeignKey(Content, on_delete=models.CASCADE, verbose_name='集合')
     content = models.TextField(verbose_name='内容', null=True, blank=True)
+    thumbnail = models.CharField(max_length=255, verbose_name='缩略图', null=True, blank=True)
+    content_type = models.CharField(
+        max_length=20, verbose_name='内容类型', null=True, blank=True, choices=CONTENT_TYPE_CHOICES
+    )
 
     class Meta:
         verbose_name = '文档'

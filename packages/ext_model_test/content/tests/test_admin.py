@@ -4,13 +4,11 @@ from django.contrib.admin.sites import AdminSite
 from django.contrib.auth import get_user_model
 from django.test import RequestFactory, TestCase
 from django.urls import reverse
-from unittest.mock import MagicMock
-from unittest.mock import patch
-
 from ext_model.admin import AttrDefinitionModelAdmin, ModelDefinitionModelAdmin
 
 # 导入ext_model的模型和admin
 from ext_model.models import AttrDefinitionModel, ModelDefinitionModel
+
 from content.models import ConcreteExtModel
 
 User = get_user_model()

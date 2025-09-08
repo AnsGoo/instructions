@@ -1,6 +1,7 @@
 from django.contrib import admin
-from .models import ConcreteExtModel
 from ext_model.register import register_admin
+
+from .models import ConcreteExtModel
 
 # Register your models here.
 

@@ -1,12 +1,12 @@
 from django.contrib.auth.models import User
 from django.db import connection
+from django.db.models import CharField, Count, Value
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.test import TestCase
-from django.db.models import Count, Value, CharField
 
 # 导入ext_model的模型
-from ext_model.models import ModelDefinitionModel, AttrDefinitionModel
+from ext_model.models import AttrDefinitionModel, ModelDefinitionModel
 
 
 class SoftDeleteTestSuite(TestCase):
@@ -46,8 +46,7 @@ class SoftDeleteTestSuite(TestCase):
         # 验证软删除状态
         with connection.cursor() as cursor:
             cursor.execute(
-                'SELECT is_delete, delete_at FROM attr_model WHERE id = %s',
-                [deleted_instance_id]
+                'SELECT is_delete, delete_at FROM attr_model WHERE id = %s', [deleted_instance_id]
             )
             result = cursor.fetchone()
             self.assertTrue(result[0])  # is_delete应该为True
@@ -178,10 +177,7 @@ class SoftDeleteTestSuite(TestCase):
 
         # 验证已删除实例的名称没有被更新
         with connection.cursor() as cursor:
-            cursor.execute(
-                'SELECT name FROM attr_model WHERE id = %s',
-                [deleted_instance_id]
-            )
+            cursor.execute('SELECT name FROM attr_model WHERE id = %s', [deleted_instance_id])
             result = cursor.fetchone()
             self.assertEqual(result[0], '已删除实例')  # 名称应该保持不变
 
@@ -205,7 +201,6 @@ class SoftDeleteTestSuite(TestCase):
         )
 
         # 执行软删除
-        deleted_instance_id = deleted_instance.id
         deleted_instance.delete()
 
         # 1. select_related()方法
@@ -213,7 +208,9 @@ class SoftDeleteTestSuite(TestCase):
         self.assertEqual(len(select_related_instances), 1)
 
         # 2. prefetch_related()方法
-        prefetch_related_instances = ModelDefinitionModel.objects.prefetch_related('create_user').all()
+        prefetch_related_instances = ModelDefinitionModel.objects.prefetch_related(
+            'create_user'
+        ).all()
         self.assertEqual(len(prefetch_related_instances), 1)
 
         # 3. defer()和only()方法

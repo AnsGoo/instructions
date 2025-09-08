@@ -62,6 +62,30 @@ class ModelDefinitionModelAdmin(admin.ModelAdmin):
         return super().get_queryset(request).prefetch_related('attrdefinitionmodel_model')
 
 
+class ConflictValidator:
+    all_attrname_set: set[str]
+
+    def __init__(self, all_attrname_set: set[str]) -> None:
+        super().__init__()
+        self.all_attrname_set = all_attrname_set
+
+    def validate(self, value):
+        if value in self.all_attrname_set:
+            raise ValidationError(message=f'属性{value}已存在', code='attr_conflict')
+
+
+class UsedAttrValidator:
+    exists_attrid_set: set[str]
+
+    def __init__(self, exists_attrid_set: set[str]) -> None:
+        super().__init__()
+        self.exists_attrid_set = exists_attrid_set
+
+    def validate(self, value):
+        if value in self.exists_attrid_set:
+            raise ValidationError(message=f'属性{value}已被使用', code='attr_used')
+
+
 class AttrDefinitionModelAdmin(admin.ModelAdmin):
     """属性定义模型的管理界面配置"""
 
@@ -112,17 +136,10 @@ class AttrDefinitionModelAdmin(admin.ModelAdmin):
         for field in fields:
             all_attrname_set.add(field.name)
 
-        def ConflictValidator(value):
-            if value in all_attrname_set:
-                raise ValidationError(message=f'属性{value}已存在', code='attr_conflict')
-
-        def UsedAttrValidator(value):
-            if value in exists_attrid_set:
-                raise ValidationError(message=f'属性{value}已被使用', code='attr_used')
-            return value
-
-        form.base_fields['attr_name'].validators.append(ConflictValidator)
-        form.base_fields['attr_id'].validators.append(UsedAttrValidator)
+        attrname_validator = ConflictValidator(all_attrname_set)
+        form.base_fields['attr_name'].validators.append(attrname_validator.validate)
+        used_attr_validator = UsedAttrValidator(exists_attrid_set)
+        form.base_fields['attr_id'].validators.append(used_attr_validator.validate)
 
         prefix = ext_model.get_ext_prefix()
         ATTR_TYPE_CHOICES = []

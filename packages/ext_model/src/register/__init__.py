@@ -1,4 +1,5 @@
 from django.contrib import admin
+
 from ..admin import AttrDefinitionModelAdmin, ModelDefinitionModelAdmin
 from ..models import AttrDefinitionModel, ModelDefinitionModel
 
