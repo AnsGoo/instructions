@@ -2,7 +2,8 @@ import json
 import os
 
 from django.core.management.base import BaseCommand
-from ext_model.models import ModelDefinitionModel
+
+from content.models import MyModelDefinitionModel
 
 
 class Command(BaseCommand):
@@ -50,7 +51,7 @@ class Command(BaseCommand):
                 pk = fixture['pk']
 
                 # 获取或创建Category对象
-                attr_definition = ModelDefinitionModel(
+                attr_definition = MyModelDefinitionModel(
                     id=pk,
                     name=fields['name'],
                     code=fields['code'],

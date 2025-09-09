@@ -1,8 +1,21 @@
 from django.contrib import admin
-from ext_model.models import AttrDefinitionModel
-from ext_model.register import register_admin
+from ext_model.admin import AttrDefinitionModelAdmin, ModelDefinitionModelAdmin
 
-from .models import Category, Content, Document, Level1Category
+from .models import (
+    Category,
+    Content,
+    Document,
+    Level1Category,
+    MyAttrDefinitionModel,
+    MyModelDefinitionModel,
+)
+
+
+def get_ext_model(site: admin.AdminSite):
+    return Content
+
+
+admin.AdminSite.get_ext_model = get_ext_model
 
 
 @admin.register(Level1Category)
@@ -117,7 +130,7 @@ class ContentAdmin(admin.ModelAdmin):
             self.fieldsets.pop()
         obj = super().get_object(request, object_id, from_field)
         definition_id = obj.category.definition_id
-        attr_set = AttrDefinitionModel.objects.filter(model_id=definition_id)
+        attr_set = MyAttrDefinitionModel.objects.filter(model_id=definition_id)
 
         ext_fields = []
         for attr in attr_set:
@@ -197,8 +210,11 @@ class DocumentAdmin(admin.ModelAdmin):
         return super().save_model(request, obj, form, change)
 
 
-def get_ext_model(site: admin.AdminSite):
-    return Content
+@admin.register(MyModelDefinitionModel)
+class MyModelDefinitionModelAdmin(ModelDefinitionModelAdmin):
+    pass
 
 
-register_admin(get_ext_model)
+@admin.register(MyAttrDefinitionModel)
+class MyAttrDefinitionModelAdmin(AttrDefinitionModelAdmin):
+    pass

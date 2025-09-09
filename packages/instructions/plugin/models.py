@@ -1,5 +1,6 @@
 from django.db import models
-from ext_model.models import BaseModel
+
+from instructions.models import BaseModel
 
 
 class PluginModel(BaseModel):

@@ -1,9 +1,42 @@
 from django.db import models
-from ext_model.models import ExtModel, ModelDefinitionModel
+from ext_model.models import AttrDefinitionModel, ExtModel, ModelDefinitionModel
+
+
+class MyModelDefinitionModel(ModelDefinitionModel):
+    class Meta:
+        verbose_name = '模型定义'
+        verbose_name_plural = '模型定义'
+
+    @classmethod
+    def get_child_model(cls):
+        return MyAttrDefinitionModel
+
+
+class MyAttrDefinitionModel(AttrDefinitionModel):
+    model = models.ForeignKey(
+        MyModelDefinitionModel,
+        on_delete=models.SET_NULL,
+        null=True,
+        verbose_name='模型',
+        db_constraint=False,
+    )
+
+    class Meta(AttrDefinitionModel.Meta):
+        verbose_name = '属性定义'
+        verbose_name_plural = '属性定义'
 
 
 class ConcreteExtModel(ExtModel):
     """测试用的具体ExtModel子类"""
+
+    class Meta:
+        db_table = 'ext_model'
+        verbose_name = '模型'
+        verbose_name_plural = '模型'
+        app_label = 'content'
+
+    def get_ext_definition_model(self):
+        return MyModelDefinitionModel
 
     name = models.CharField(max_length=255, verbose_name='测试属性1', null=True, blank=True)
     code = models.CharField(max_length=255, verbose_name='测试属性2', null=True, blank=True)
@@ -29,7 +62,7 @@ class ConcreteExtModel(ExtModel):
     attr15 = models.DateTimeField(verbose_name='测试属性15', null=True, blank=True)
     attr16 = models.UUIDField(verbose_name='测试属性16', null=True, blank=True)
     definition = models.ForeignKey(
-        ModelDefinitionModel,
+        MyModelDefinitionModel,
         on_delete=models.CASCADE,
         null=True,
         blank=True,

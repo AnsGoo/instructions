@@ -4,12 +4,9 @@ from django.contrib.admin.sites import AdminSite
 from django.contrib.auth import get_user_model
 from django.test import RequestFactory, TestCase
 from django.urls import reverse
-from ext_model.admin import AttrDefinitionModelAdmin, ModelDefinitionModelAdmin
 
-# 导入ext_model的模型和admin
-from ext_model.models import AttrDefinitionModel, ModelDefinitionModel
-
-from content.models import ConcreteExtModel
+from content.admin import MyAttrDefinitionModelAdmin, MyModelDefinitionModelAdmin
+from content.models import ConcreteExtModel, MyAttrDefinitionModel, MyModelDefinitionModel
 
 User = get_user_model()
 
@@ -26,7 +23,7 @@ class MockAdminSite(AdminSite):
 
 
 class ModelDefinitionAdminTest(TestCase):
-    """测试ModelDefinitionModelAdmin的功能"""
+    """测试MyModelDefinitionModelAdmin的功能"""
 
     def setUp(self):
         # 创建测试用户
@@ -37,12 +34,8 @@ class ModelDefinitionAdminTest(TestCase):
         self.client.login(username='admin', password='password123')
 
         # 创建测试数据
-        self.model_definition = ModelDefinitionModel.objects.create(
-            name='测试模型',
-            code='test_model',
-            description='这是一个测试模型',
-            create_user=self.superuser,
-            update_user=self.superuser,
+        self.model_definition = MyModelDefinitionModel.objects.create(
+            name='测试模型', code='test_model', description='这是一个测试模型'
         )
 
         # 创建RequestFactory
@@ -50,11 +43,11 @@ class ModelDefinitionAdminTest(TestCase):
 
         # 创建Admin实例
         self.admin_site = MockAdminSite()
-        self.model_admin = ModelDefinitionModelAdmin(ModelDefinitionModel, self.admin_site)
+        self.model_admin = MyModelDefinitionModelAdmin(MyModelDefinitionModel, self.admin_site)
 
     def test_model_definition_list_display(self):
         """测试模型定义列表页面的显示字段"""
-        url = reverse('admin:ext_model_modeldefinitionmodel_changelist')
+        url = reverse('admin:content_mymodeldefinitionmodel_changelist')
         response = self.client.get(url)
 
         # 检查响应状态码
@@ -67,7 +60,7 @@ class ModelDefinitionAdminTest(TestCase):
 
     def test_model_definition_search(self):
         """测试模型定义的搜索功能"""
-        url = reverse('admin:ext_model_modeldefinitionmodel_changelist') + '?q=测试模型'
+        url = reverse('admin:content_mymodeldefinitionmodel_changelist') + '?q=测试模型'
         response = self.client.get(url)
 
         # 检查响应状态码
@@ -79,7 +72,7 @@ class ModelDefinitionAdminTest(TestCase):
     def test_model_definition_detail_view(self):
         """测试模型定义详情页面"""
         url = reverse(
-            'admin:ext_model_modeldefinitionmodel_change', args=[self.model_definition.id]
+            'admin:content_mymodeldefinitionmodel_change', args=[self.model_definition.id]
         )
         response = self.client.get(url)
 
@@ -93,7 +86,7 @@ class ModelDefinitionAdminTest(TestCase):
 
     def test_model_definition_no_add_permission(self):
         """测试模型定义没有添加权限"""
-        request = self.factory.get(reverse('admin:ext_model_modeldefinitionmodel_add'))
+        request = self.factory.get(reverse('admin:content_mymodeldefinitionmodel_add'))
         request.user = self.superuser
 
         # 检查是否有权限添加
@@ -104,7 +97,7 @@ class ModelDefinitionAdminTest(TestCase):
 
     def test_model_definition_no_delete_permission(self):
         """测试模型定义没有删除权限"""
-        request = self.factory.get(reverse('admin:ext_model_modeldefinitionmodel_changelist'))
+        request = self.factory.get(reverse('admin:content_mymodeldefinitionmodel_changelist'))
         request.user = self.superuser
 
         # 检查是否有权限删除
@@ -115,7 +108,7 @@ class ModelDefinitionAdminTest(TestCase):
 
 
 class AttrDefinitionAdminTest(TestCase):
-    """测试AttrDefinitionModelAdmin的功能"""
+    """测试MyAttrDefinitionModelAdmin的功能"""
 
     def setUp(self):
         # 创建测试用户
@@ -126,22 +119,16 @@ class AttrDefinitionAdminTest(TestCase):
         self.client.login(username='admin', password='password123')
 
         # 创建测试数据
-        self.model_definition = ModelDefinitionModel.objects.create(
-            name='测试模型',
-            code='test_model',
-            description='这是一个测试模型',
-            create_user=self.superuser,
-            update_user=self.superuser,
+        self.model_definition = MyModelDefinitionModel.objects.create(
+            name='测试模型', code='test_model', description='这是一个测试模型'
         )
 
-        self.attr_definition = AttrDefinitionModel.objects.create(
+        self.attr_definition = MyAttrDefinitionModel.objects.create(
             attr_name='test_attr',
             attr_id='attr1',
             attr_label='测试属性',
             attr_description='这是一个测试属性',
             model=self.model_definition,
-            create_user=self.superuser,
-            update_user=self.superuser,
         )
 
         # 创建RequestFactory
@@ -149,7 +136,7 @@ class AttrDefinitionAdminTest(TestCase):
 
         # 创建Admin实例
         self.admin_site = MockAdminSite()
-        self.attr_admin = AttrDefinitionModelAdmin(AttrDefinitionModel, self.admin_site)
+        self.attr_admin = MyAttrDefinitionModelAdmin(MyAttrDefinitionModel, self.admin_site)
 
         # 创建模拟的ExtModel
         self.mock_ext_model = MagicMock()
@@ -163,7 +150,7 @@ class AttrDefinitionAdminTest(TestCase):
 
     def test_attr_definition_list_display(self):
         """测试属性定义列表页面的显示字段"""
-        url = reverse('admin:ext_model_attrdefinitionmodel_changelist')
+        url = reverse('admin:content_myattrdefinitionmodel_changelist')
         response = self.client.get(url)
 
         # 检查响应状态码
@@ -176,7 +163,7 @@ class AttrDefinitionAdminTest(TestCase):
 
     def test_attr_definition_search(self):
         """测试属性定义的搜索功能"""
-        url = reverse('admin:ext_model_attrdefinitionmodel_changelist') + '?q=测试属性'
+        url = reverse('admin:content_myattrdefinitionmodel_changelist') + '?q=测试属性'
         response = self.client.get(url)
 
         # 检查响应状态码
@@ -187,7 +174,7 @@ class AttrDefinitionAdminTest(TestCase):
 
     def test_attr_definition_detail_view(self):
         """测试属性定义详情页面"""
-        url = reverse('admin:ext_model_attrdefinitionmodel_change', args=[self.attr_definition.id])
+        url = reverse('admin:content_myattrdefinitionmodel_change', args=[self.attr_definition.id])
         response = self.client.get(url)
 
         # 检查响应状态码
@@ -202,7 +189,7 @@ class AttrDefinitionAdminTest(TestCase):
         """测试属性定义表单验证"""
         # 测试冲突验证器
         request = self.factory.post(
-            reverse('admin:ext_model_attrdefinitionmodel_add'),
+            reverse('admin:content_myattrdefinitionmodel_add'),
             {
                 'attr_name': 'attr1',  # 与已存在的字段名冲突
                 'attr_id': 'attr2',

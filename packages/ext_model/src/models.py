@@ -1,95 +1,21 @@
 from typing import Any
 
-# 使用Django的标准方式获取AUTH_USER_MODEL
-from django.conf import settings
 from django.db import models
-from django.utils import timezone
-
-AUTH_USER_MODEL = settings.AUTH_USER_MODEL
 
 
-class BaseManger(models.Manager):
-    def delete(self):
-        return super().update(is_delete=True, delete_at=timezone.now())
-
-    def _chain(self):
-        return super()._chain().filter(is_delete=False)
-
-    def get_queryset(self):
-        return super().get_queryset().filter(is_delete=False)
-
-    def update(self, **kwargs):
-        if 'is_delete' in kwargs:
-            del kwargs['is_delete']
-        if 'delete_at' in kwargs:
-            del kwargs['delete_at']
-        return super().update(**kwargs)
-
-    def all(self):
-        return super().all().filter(is_delete=False)
-
-
-# Create your models here.
-class BaseModel(models.Model):
-    id = models.AutoField(primary_key=True, verbose_name='ID')
-    create_time = models.DateTimeField(
-        auto_now_add=True, null=True, blank=True, verbose_name='创建时间'
-    )
-    update_time = models.DateTimeField(
-        auto_now=True, null=True, blank=True, verbose_name='更新时间'
-    )
-    is_delete = models.BooleanField(default=False, verbose_name='是否删除')
-    create_user = models.ForeignKey(
-        AUTH_USER_MODEL,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        verbose_name='创建用户',
-        related_name='%(class)s_create',
-    )
-    update_user = models.ForeignKey(
-        AUTH_USER_MODEL,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        verbose_name='更新用户',
-        related_name='%(class)s_update',
-    )
-    delete_at = models.DateTimeField(null=True, blank=True, verbose_name='删除时间')
-
-    objects = BaseManger()
-
-    class Meta:
-        abstract = True
-        ordering = ['id']
-        verbose_name = '基础模型'
-        verbose_name_plural = '基础模型'
-
-    def __str__(self):
-        return str(self.id)
-
-    def delete(self, using=None, keep_parents=False):
-        self.is_delete = True
-        self.delete_at = timezone.now()
-        self.save()
-        return 1
-
-
-class ModelDefinitionModel(BaseModel):
+class ModelDefinitionModel(models.Model):
     name = models.CharField(max_length=255, verbose_name='模型名称', null=True, blank=True)
     code = models.CharField(max_length=255, verbose_name='模型类型', null=True, blank=True)
     description = models.CharField(max_length=255, verbose_name='模型描述', null=True, blank=True)
 
     class Meta:
-        db_table = 'attr_model'
-        verbose_name = '模型定义'
-        verbose_name_plural = '模型定义'
+        abstract = True
 
     def __str__(self):
         return self.code + '-' + self.name
 
 
-class ExtModelManger(BaseManger):
+class ExtModelManger(models.Manager):
     def create(self, **kwargs):
         self.transform(kwargs)
         return super().create(**kwargs)
@@ -108,7 +34,7 @@ class ExtModelManger(BaseManger):
         return data
 
 
-class ExtModel(BaseModel):
+class ExtModel(models.Model):
     objects = ExtModelManger()
 
     class Meta:
@@ -165,6 +91,9 @@ class ExtModel(BaseModel):
         self.__model_id = model_id
         self.__get_attr_definition_map()
 
+    def get_ext_definition_model(self):
+        raise NotImplementedError('子类必须实现get_ext_definition_model方法')
+
     def __get_attr_definition_map(self):
         """
         获取属性定义映射，用于代理模式
@@ -174,7 +103,10 @@ class ExtModel(BaseModel):
         try:
             if len(self.__attr_definition_cache.keys()) == 0:
                 # 获取与该模型关联的所有属性定义
-                attr_definitions = AttrDefinitionModel.objects.filter(model_id=self.model_id).all()
+                DefinitionModel = self.get_ext_definition_model()
+                AttrModel = DefinitionModel.get_child_model()
+                attr_definitions = AttrModel.objects.filter(model_id=self.model_id).all()
+
                 for attr_def in attr_definitions:
                     self.__attr_definition_cache.setdefault(
                         attr_def.attr_name,
@@ -222,7 +154,7 @@ class ExtModel(BaseModel):
         return self
 
 
-class AttrDefinitionModel(BaseModel):
+class AttrDefinitionModel(models.Model):
     attr_name = models.CharField(max_length=255, verbose_name='属性名称')
     attr_id = models.CharField(max_length=255, verbose_name='属性ID')
     attr_description = models.CharField(
@@ -235,14 +167,19 @@ class AttrDefinitionModel(BaseModel):
         null=True,
         blank=True,
         verbose_name='模型',
-        related_name='%(class)s_model',
     )
 
     class Meta:
-        db_table = 'attr_define'
-        verbose_name = '属性定义'
-        verbose_name_plural = '属性定义'
+        abstract = True
         unique_together = ('model', 'attr_id')
 
     def __str__(self) -> str:
         return f'{self.attr_label}[{self.attr_name}]'
+
+    # 为了确保子类能够正确继承Meta属性，提供一个类方法
+    @classmethod
+    def get_meta_options(cls):
+        """获取Meta选项，便于子类继承"""
+        return {
+            'unique_together': cls._meta.unique_together,
+        }

@@ -3,11 +3,16 @@ from django.contrib import admin
 from django.core.exceptions import ValidationError
 from django.db import connection
 
-from .models import AttrDefinitionModel, ExtModel
+from .models import AttrDefinitionModel
 
 
 class AttrDefinitionInline(admin.TabularInline):
     model = AttrDefinitionModel
+
+    def __init__(self, parent_model, admin_site):
+        self.model = parent_model.get_child_model()
+        super().__init__(parent_model, admin_site)
+
     extra = 0
     fields = ('attr_id', 'attr_name', 'attr_type', 'attr_label')
     readonly_fields = ('attr_id', 'attr_name', 'attr_type', 'attr_label')
@@ -49,17 +54,13 @@ class ModelDefinitionModelAdmin(admin.ModelAdmin):
     ordering = ('id',)
     list_per_page = 20
     inlines = [AttrDefinitionInline]
-    readonly_fields = ('create_time', 'update_time', 'name', 'code')
+    readonly_fields = ('name', 'code')
 
     def has_add_permission(self, request, obj=None):
         return False
 
     def has_delete_permission(self, request, obj=None):
         return False
-
-    def get_queryset(self, request):
-        # 使用正确的反向关系名称，基于外键字段的related_name设置
-        return super().get_queryset(request).prefetch_related('attrdefinitionmodel_model')
 
 
 class ConflictValidator:
@@ -89,26 +90,18 @@ class UsedAttrValidator:
 class AttrDefinitionModelAdmin(admin.ModelAdmin):
     """属性定义模型的管理界面配置"""
 
-    list_display = ('id', 'attr_id', 'attr_name', 'attr_label', 'create_time', 'update_time')
+    list_display = ('id', 'attr_id', 'attr_name', 'attr_label')
     search_fields = ('attr_name', 'attr_id', 'model__name')
     ordering = ('id',)
     list_per_page = 20
     list_display_links = ('attr_name', 'attr_id')
 
-    fieldsets = (
+    fieldsets = [
         (
             '基本信息',
             {'fields': ('attr_name', 'attr_label', 'attr_id', 'model', 'attr_description')},
-        ),
-        (
-            '审计信息',
-            {
-                'fields': ('create_time', 'update_time', 'create_user', 'update_user'),
-                'classes': ('collapse',),
-            },
-        ),
-    )
-    readonly_fields = ('create_time', 'update_time', 'create_user', 'update_user')
+        )
+    ]
 
     def get_ext_attr(self, model_id: str, attr_name_set: set[str], attr_id_set: set[str]):
         exits_attr_queryset = self.model.objects.filter(model_id=model_id).values_list(
@@ -130,7 +123,7 @@ class AttrDefinitionModelAdmin(admin.ModelAdmin):
             self.get_ext_attr(cur_model_id, all_attrname_set, exists_attrid_set)
         if not hasattr(self.admin_site, 'get_ext_model'):
             raise Exception('AdminSite must implement get_ext_model')
-        ext_model: ExtModel = self.admin_site.get_ext_model()
+        ext_model = self.admin_site.get_ext_model()
         fields = ext_model._meta.get_fields()
 
         for field in fields:

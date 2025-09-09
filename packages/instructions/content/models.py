@@ -1,13 +1,44 @@
 from django.db import models
-from ext_model.models import BaseModel, ExtModel, ModelDefinitionModel
+from ext_model.models import AttrDefinitionModel, ExtModel, ModelDefinitionModel
 
-# Create your models here.
+from instructions.models import BaseModel
+
+
+class MyExtModel(ExtModel, BaseModel):
+    pass
+
+
+class MyModelDefinitionModel(ModelDefinitionModel, BaseModel):
+    class Meta:
+        verbose_name = '模型定义'
+        verbose_name_plural = '模型定义'
+
+    @classmethod
+    def get_child_model(cls):
+        return MyAttrDefinitionModel
+
+
+class MyAttrDefinitionModel(AttrDefinitionModel, BaseModel):
+    model = models.ForeignKey(
+        MyModelDefinitionModel,
+        on_delete=models.SET_NULL,
+        null=True,
+        verbose_name='模型',
+        db_constraint=False,
+    )
+
+    class Meta(AttrDefinitionModel.Meta):
+        verbose_name = '属性定义'
+        verbose_name_plural = '属性定义'
 
 
 class Level1Category(BaseModel):
     code = models.CharField(max_length=255, verbose_name='代码', unique=True)
     name = models.CharField(max_length=255, verbose_name='名称')
     description = models.TextField(verbose_name='描述')
+
+    def get_ext_definition_model(self):
+        return MyModelDefinitionModel
 
     class Meta:
         verbose_name = '一级分类'
@@ -22,7 +53,7 @@ class Category(BaseModel):
     name = models.CharField(max_length=255, verbose_name='名称')
     description = models.TextField(verbose_name='描述')
     definition = models.OneToOneField(
-        ModelDefinitionModel,
+        MyModelDefinitionModel,
         on_delete=models.SET_NULL,
         null=True,
         verbose_name='定义',
@@ -36,6 +67,9 @@ class Category(BaseModel):
         db_constraint=False,
     )
 
+    def get_ext_definition_model(self):
+        return MyModelDefinitionModel
+
     class Meta:
         verbose_name = '分类'
         verbose_name_plural = '分类'
@@ -44,7 +78,7 @@ class Category(BaseModel):
         return self.name + ' - ' + self.code
 
 
-class Content(ExtModel):
+class Content(ExtModel, BaseModel):
     code = models.CharField(max_length=255, verbose_name='编码')
     title = models.CharField(max_length=255, verbose_name='标题')
     category = models.ForeignKey(
@@ -91,6 +125,9 @@ class Content(ExtModel):
     attr28 = models.JSONField(verbose_name='属性28', null=True, blank=True)
     attr29 = models.JSONField(verbose_name='属性29', null=True, blank=True)
     attr30 = models.JSONField(verbose_name='属性30', null=True, blank=True)
+
+    def get_ext_definition_model(self):
+        return MyModelDefinitionModel
 
     class Meta:
         verbose_name = '内容'

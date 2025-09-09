@@ -2,9 +2,8 @@ import json
 import os
 
 from django.core.management.base import BaseCommand
-from ext_model.models import ModelDefinitionModel
 
-from content.models import Category, Level1Category
+from content.models import Category, Level1Category, MyModelDefinitionModel
 
 
 class Command(BaseCommand):
@@ -74,7 +73,7 @@ class Command(BaseCommand):
 
                     # 检查是否已有关联的definition
                     if not category.definition:
-                        attr_definition = ModelDefinitionModel(
+                        attr_definition = MyModelDefinitionModel(
                             name=fields['name'],
                             code=fields['code'],
                         )
