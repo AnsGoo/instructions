@@ -49,18 +49,11 @@ class ModelDefinitionModelAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'code', 'description')
     list_filter = ('name', 'code')
     search_fields = ('name', 'code')
-    fields = ('name', 'code', 'description')
     list_display_links = ('name', 'code')
     ordering = ('id',)
     list_per_page = 20
     inlines = [AttrDefinitionInline]
-    readonly_fields = ('name', 'code')
-
-    def has_add_permission(self, request, obj=None):
-        return False
-
-    def has_delete_permission(self, request, obj=None):
-        return False
+    fieldsets = (('基本信息', {'fields': ('name', 'code', 'description')}),)
 
 
 class ConflictValidator:

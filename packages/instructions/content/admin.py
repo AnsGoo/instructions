@@ -1,3 +1,5 @@
+from dataclasses import field
+
 from django.contrib import admin
 from ext_model.admin import AttrDefinitionModelAdmin, ModelDefinitionModelAdmin
 
@@ -115,7 +117,6 @@ class ContentAdmin(admin.ModelAdmin):
         ),
     ]
     readonly_fields = ('create_time', 'update_time', 'create_user', 'update_user')
-    ORIGIN_FIELD_SET_NUM = 4
 
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
@@ -126,8 +127,6 @@ class ContentAdmin(admin.ModelAdmin):
         return form
 
     def get_object(self, request, object_id, from_field=None):
-        if len(self.fieldsets) > self.ORIGIN_FIELD_SET_NUM:
-            self.fieldsets.pop()
         obj = super().get_object(request, object_id, from_field)
         definition_id = obj.category.definition_id
         attr_set = MyAttrDefinitionModel.objects.filter(model_id=definition_id)
@@ -137,6 +136,11 @@ class ContentAdmin(admin.ModelAdmin):
             ext_fields.append(attr.attr_id)
             self.attr_feild_map[attr.attr_id] = f'{attr.attr_label}[{attr.attr_name}]'
 
+        for key, value in self.fieldsets:
+            print(key)
+            if key == '扩展信息':
+                self.fieldsets.remove(value)
+
         self.fieldsets.append(
             (
                 '扩展信息',
@@ -145,7 +149,6 @@ class ContentAdmin(admin.ModelAdmin):
                 },
             )
         )
-
         return obj
 
     def save_model(self, request, obj, form, change):
@@ -173,7 +176,7 @@ class DocumentAdmin(admin.ModelAdmin):
     autocomplete_fields = ('collection',)
 
     fieldsets = [
-        ('基本信息', {'fields': ('name', 'path', 'type', 'size', 'order', 'hex')}),
+        ('基本信息', {'fields': ('name', 'path', 'mime_type', 'size', 'order', 'hex')}),
         ('关联信息', {'fields': ('collection',)}),
         (
             '内容信息',
@@ -193,15 +196,7 @@ class DocumentAdmin(admin.ModelAdmin):
     readonly_fields = ('create_time', 'update_time', 'create_user', 'update_user')
 
     def get_queryset(self, request):
-        qs = super().get_queryset(request)
-        # 可以在这里添加自定义的查询逻辑
-        return qs
-
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == 'collection':
-            # 可以在这里添加自定义的外键查询逻辑
-            pass
-        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+        return super().get_queryset(request).prefetch_related('category ')
 
     def save_model(self, request, obj, form, change):
         if not change:
@@ -212,9 +207,55 @@ class DocumentAdmin(admin.ModelAdmin):
 
 @admin.register(MyModelDefinitionModel)
 class MyModelDefinitionModelAdmin(ModelDefinitionModelAdmin):
-    pass
+    def get_list_display(self, request):
+        return ('id', 'name', 'code', 'update_user', 'create_time', 'update_time')
+
+    def get_fieldsets(self, request, obj=None):
+        if obj:
+            return self.fieldsets + (
+                (
+                    '审计信息',
+                    {
+                        'fields': ('create_time', 'update_time', 'create_user', 'update_user'),
+                        'classes': ('collapse',),
+                    },
+                ),
+            )
+        return self.fieldsets
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj:
+            return self.readonly_fields + (
+                'name',
+                'code',
+                'create_time',
+                'update_time',
+                'create_user',
+                'update_user',
+            )
+        return self.readonly_fields
+
+    def save_model(self, request, obj, form, change):
+        if not change:
+            obj.create_user = request.user
+        obj.update_user = request.user
+        return super().save_model(request, obj, form, change)
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.prefetch_related('update_user')
 
 
 @admin.register(MyAttrDefinitionModel)
 class MyAttrDefinitionModelAdmin(AttrDefinitionModelAdmin):
-    pass
+    def save_model(self, request, obj, form, change):
+        if not change:
+            obj.create_user = request.user
+        obj.update_user = request.user
+        return super().save_model(request, obj, form, change)
