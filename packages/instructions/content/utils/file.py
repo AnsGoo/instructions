@@ -2,7 +2,6 @@ import hashlib
 from pathlib import Path
 
 from django.conf import settings
-from markitdown import MarkItDown
 
 
 def get_file_md5(chunk):
@@ -24,7 +23,4 @@ def store_file(filename, hexcode, chunk):
 
 
 def convert_file(file_path):
-    md = MarkItDown(enable_plugins=True)  # 设置为 True 启用插件
-    file_path = Path(settings.STORE_PATH, file_path)
-    md.extract_images = True
-    return md.convert(file_path)
+    pass

@@ -1,5 +1,3 @@
-from dataclasses import field
-
 from django.contrib import admin
 from ext_model.admin import AttrDefinitionModelAdmin, ModelDefinitionModelAdmin
 
