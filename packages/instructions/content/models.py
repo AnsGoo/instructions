@@ -173,4 +173,4 @@ class Document(BaseModel):
         unique_together = ('collection', 'hex')
 
     def __str__(self):
-        return self.name + ' - ' + self.path
+        return self.name

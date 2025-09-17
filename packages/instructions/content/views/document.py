@@ -1,5 +1,10 @@
+from ctypes import create_unicode_buffer
+from pydoc import doc
+from venv import create
+
 from django.db.models import F
 from django.shortcuts import get_object_or_404
+from plugin.tika import TikaClientPlugin
 from rest_framework import filters, mixins, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
@@ -33,20 +38,22 @@ class DocumentViewSet(mixins.DestroyModelMixin, mixins.ListModelMixin, GenericVi
         file_path, filecode = store_file(file.name, md5, bin_data)
         document = Document.objects.create(
             size=file.size,
-            code=filecode,
             name=file.name,
-            type=file.content_type,
-            file=file_path,
-            hexcode=md5,
+            mime_type=file.content_type,
+            path=file_path,
+            hex=md5,
             collection_id=collection,
             order=Document.objects.filter(collection_id=collection).count() + 1,
+            create_user=request.user,
         )
         return Response(DocumentSerializer(document).data, status=status.HTTP_201_CREATED)
 
     @action(methods=['GET'], detail=True, url_path='convert')
-    def convert(self, _request, pk=None):
+    def convert(self, request, pk=None):
         doc_obj = get_object_or_404(Document, id=pk)
-        conten = convert_file(doc_obj.file)
-        doc_obj.content = conten
+        tika_plugin = TikaClientPlugin()
+        data = tika_plugin.run(doc_obj)
+        doc_obj.content = data['content'].strip()
+        doc_obj.update_user = request.user
         doc_obj.save()
         return Response(DocumentSerializer(doc_obj).data, status=status.HTTP_200_OK)

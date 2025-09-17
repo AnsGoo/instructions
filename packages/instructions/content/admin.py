@@ -191,10 +191,20 @@ class DocumentAdmin(admin.ModelAdmin):
             },
         ),
     ]
-    readonly_fields = ('create_time', 'update_time', 'create_user', 'update_user')
+    readonly_fields = (
+        'create_time',
+        'update_time',
+        'create_user',
+        'update_user',
+        'collection',
+        'hex',
+        'size',
+        'mime_type',
+        'path',
+    )
 
     def get_queryset(self, request):
-        return super().get_queryset(request).prefetch_related('category ')
+        return super().get_queryset(request).prefetch_related('collection')
 
     def save_model(self, request, obj, form, change):
         if not change:

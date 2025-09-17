@@ -19,7 +19,7 @@ def store_file(filename, hexcode, chunk):
     file_path.parent.mkdir(parents=True, exist_ok=True)
     with open(file_path, 'wb') as f:
         f.write(chunk)
-    return file_path.absolute().replace(root_path.absolute(), ''), hexcode
+    return file_path.relative_to(root_path), hexcode
 
 
 def convert_file(file_path):

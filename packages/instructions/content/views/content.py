@@ -1,10 +1,9 @@
-from ext_model.models import AttrDefinitionModel
 from rest_framework import filters, status, viewsets
 from rest_framework.exceptions import APIException
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
-from content.models import Category, Content
+from content.models import Category, Content, MyAttrDefinitionModel
 from content.serializers import ContentSerializer
 
 
@@ -33,7 +32,7 @@ class ContentViewSet(viewsets.ModelViewSet):
         try:
             category_id = self.kwargs.get('category_id')
             category = Category.objects.filter(id=category_id).first()
-            ext_fields = AttrDefinitionModel.objects.filter(model=category.definition_id)
+            ext_fields = MyAttrDefinitionModel.objects.filter(model=category.definition_id)
             self.kwargs.setdefault('definition_id', category.definition_id)
             self.kwargs.setdefault('ext_fields', ext_fields)
         except Category.DoesNotExist:

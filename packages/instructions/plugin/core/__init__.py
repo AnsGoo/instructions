@@ -1,24 +1,25 @@
 from typing import TypeVar
 
+from content.models import Document
 from plugin.models import PluginModel
 
 T = TypeVar('T')
 
 
 class BasePlugin:
-    def __init__(self, plugin_model: PluginModel):
-        self.plugin_model = plugin_model
-        self.plugin_code = plugin_model.code
-        self.plugin_config = plugin_model.config
-        self.plugin_status = plugin_model.status
-        self.plugin_version = plugin_model.version
-        self.plugin_author = plugin_model.author
-        self.plugin_tags = plugin_model.tags
+    # def __init__(self, plugin_model: PluginModel):
+    #     self.plugin_model = plugin_model
+    #     self.plugin_code = plugin_model.code
+    #     self.plugin_config = plugin_model.config
+    #     self.plugin_status = plugin_model.status
+    #     self.plugin_version = plugin_model.version
+    #     self.plugin_author = plugin_model.author
+    #     self.plugin_tags = plugin_model.tags
 
     def setup(self):
         raise NotImplementedError('must implement setup')
 
-    def run(self, file_path: str) -> T:
+    def run(self, doc: Document) -> T:
         raise NotImplementedError('must implement run')
 
     def teardown(self):

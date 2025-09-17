@@ -1,0 +1,15 @@
+meta {
+  name: get-contents
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{BASE_URL}}/api/1/contents
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

@@ -1,0 +1,25 @@
+meta {
+  name: upload-file
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{BASE_URL}}/api/documents/upload/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "collection":1
+  }
+}
+
+body:file {
+  file: @file(/Users/chenghaiwen/Documents/code/instructions/DEVELOPMENT.md) @contentType(text/markdown; charset=utf-8)
+}
+
+settings {
+  encodeUrl: true
+}

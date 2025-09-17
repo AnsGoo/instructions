@@ -10,7 +10,11 @@ dependencies = [
     "djangorestframework>=3.16.1",
     "dotenv>=0.9.9",
     "ext-model",
+    "httpx>=0.27.0",
+    "pypdf>=4.2.0",
+    "PyMuPDF>=1.24.0",
     "psycopg2-binary>=2.9.10",
+    "tika-client>=0.10.0",
 ]
 
 

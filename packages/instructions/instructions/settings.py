@@ -84,6 +84,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'instructions.wsgi.application'
+APPEND_SLASH = True
 
 
 # Database
